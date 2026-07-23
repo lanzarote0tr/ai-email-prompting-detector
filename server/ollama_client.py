@@ -75,7 +75,6 @@ def build_payload(system_prompt: str, user_prompt: str, emails: list[dict[str, A
             "num_ctx": OLLAMA_NUM_CTX,
         },
         "prompt": (
-            "/no_think\n\n"
             "Task: classify only the emails in this batch.\n"
             f"Allowed delete_ids: {allowed_ids}\n"
             'If no listed email matches the rule, return exactly {"delete_ids":[]}.\n\n'
@@ -83,7 +82,8 @@ def build_payload(system_prompt: str, user_prompt: str, emails: list[dict[str, A
             + user_prompt
             + "\n\n"
             + format_emails(emails)
-            + "\n\nReturn one strict JSON object only. Use only allowed delete_ids."
+            + "\n\nThink internally if needed. The final response must contain one JSON object only. "
+            + "Use only allowed delete_ids."
         ),
     }
 
@@ -238,7 +238,7 @@ def normalize_delete_id_values(value: Any) -> list[Any] | None:
 
 
 def parse_delete_ids(content: str | None, emails: list[dict[str, Any]]) -> list[int]:
-    if not isinstance(content, str):
+    if not isinstance(content, str) or not content.strip():
         raise AiFilterError("AI API response did not contain a text response.")
     cleaned = clean_json_text(content)
     debug_log("AI JSON candidate: %s", preview_text(cleaned))
@@ -414,6 +414,11 @@ def call_ollama_streaming(system_prompt: str, user_prompt: str, emails: list[dic
         debug_log("AI stream batch %s raw response: %s", batch_label, preview_text(response_text))
         if thinking_text:
             debug_log("AI stream batch %s raw thinking: %s", batch_label, preview_text(thinking_text))
+        if not response_text and thinking_text:
+            raise AiFilterError(
+                "AI produced thinking text but no final response. Increase OLLAMA_NUM_PREDICT "
+                "or use a smaller OLLAMA_BATCH_SIZE."
+            )
         delete_ids.extend(parse_delete_ids(response_text, batch))
 
     return sorted(set(delete_ids)), "local-ollama"
