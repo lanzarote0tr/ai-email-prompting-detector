@@ -67,6 +67,7 @@ def build_payload(system_prompt: str, user_prompt: str, emails: list[dict[str, A
     return {
         "model": OLLAMA_MODEL,
         "stream": stream,
+        "think": True,
         "system": system_prompt,
         "options": {
             "temperature": 0,
@@ -273,6 +274,11 @@ def parse_delete_ids(content: str | None, emails: list[dict[str, Any]]) -> list[
     return parsed_ids
 
 
+def response_content(data: dict[str, Any]) -> str | None:
+    response = data.get("response")
+    return response if isinstance(response, str) else None
+
+
 def call_ollama(system_prompt: str, user_prompt: str, emails: list[dict[str, Any]]) -> tuple[list[int], str]:
     endpoint = ollama_endpoint()
     delete_ids = []
@@ -324,8 +330,11 @@ def call_ollama(system_prompt: str, user_prompt: str, emails: list[dict[str, Any
 
         if not isinstance(data, dict):
             raise AiFilterError("AI API returned invalid JSON response: top-level response must be an object.")
-        response_text = data.get("response")
+        response_text = response_content(data)
+        thinking_text = data.get("thinking")
         debug_log("AI batch %d/%d raw output: %s", batch_number, len(batches), preview_text(response_text))
+        if isinstance(thinking_text, str) and thinking_text.strip():
+            debug_log("AI batch %d/%d raw thinking: %s", batch_number, len(batches), preview_text(thinking_text))
         delete_ids.extend(parse_delete_ids(response_text, batch))
 
     return sorted(set(delete_ids)), "local-ollama"
@@ -350,7 +359,7 @@ def call_ollama_streaming(system_prompt: str, user_prompt: str, emails: list[dic
     for batch_number, batch in enumerate(batches, start=1):
         batch_label = f"{batch_number}/{len(batches)}"
         chunks = []
-        raw_events = []
+        thinking_chunks = []
         payload = build_payload(system_prompt, user_prompt, batch, stream=True)
         debug_log(
             "AI stream batch %s ids=%s prompt_chars=%d stream=true",
@@ -372,13 +381,15 @@ def call_ollama_streaming(system_prompt: str, user_prompt: str, emails: list[dic
                     if not line:
                         continue
                     line = ensure_text(line)
-                    raw_events.append(line)
                     event = json.loads(line)
                     if not isinstance(event, dict):
                         raise AiFilterError("Ollama stream returned a non-object event.")
                     token = event.get("response")
                     if isinstance(token, str):
                         chunks.append(token)
+                    thinking = event.get("thinking")
+                    if isinstance(thinking, str):
+                        thinking_chunks.append(thinking)
                     if event.get("done"):
                         break
         except requests.Timeout as e:
@@ -398,8 +409,11 @@ def call_ollama_streaming(system_prompt: str, user_prompt: str, emails: list[dic
             raise AiFilterError(f"Ollama stream returned invalid JSON: {e}") from e
 
         progress("parsing", f"Parsing batch {batch_label}")
-        content = "".join(chunks) or "\n".join(raw_events)
-        debug_log("AI stream batch %s raw output: %s", batch_label, preview_text(content))
-        delete_ids.extend(parse_delete_ids(content, batch))
+        response_text = "".join(chunks).strip()
+        thinking_text = "".join(thinking_chunks).strip()
+        debug_log("AI stream batch %s raw response: %s", batch_label, preview_text(response_text))
+        if thinking_text:
+            debug_log("AI stream batch %s raw thinking: %s", batch_label, preview_text(thinking_text))
+        delete_ids.extend(parse_delete_ids(response_text, batch))
 
     return sorted(set(delete_ids)), "local-ollama"
