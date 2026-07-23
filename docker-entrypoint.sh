@@ -32,7 +32,7 @@ gunicorn \
   --workers "${WEB_CONCURRENCY}" \
   --threads "${WEB_THREADS}" \
   --timeout 0 \
-  app:app &
+  server.app:app &
 WEB_PID="$!"
 
 wait "$WEB_PID"

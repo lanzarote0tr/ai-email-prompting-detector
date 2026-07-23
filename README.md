@@ -51,7 +51,7 @@ python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ollama pull qwen3:4b
-python app.py
+python -m server.app
 ```
 
 Ollama가 백그라운드에서 실행 중이어야 합니다. 실행되어 있지 않다면 별도 터미널에서 시작하세요.
@@ -69,12 +69,12 @@ http://127.0.0.1:5001
 기본 포트는 `5001`입니다.
 
 ```bash
-PORT=8000 python app.py
+PORT=8000 python -m server.app
 ```
 
 ## 로컬 Ollama 설정
 
-`app.py` 상단에 요청한 형식으로 들어가 있습니다.
+`server/config.py`에 요청한 형식으로 들어가 있습니다.
 
 ```python
 OLLAMA_API = os.getenv("OLLAMA_API", "http://127.0.0.1:11434/api")
@@ -91,8 +91,7 @@ export OLLAMA_READ_TIMEOUT_SECONDS="600"
 export OLLAMA_NUM_CTX="8192"
 export OLLAMA_NUM_PREDICT="256"
 export OLLAMA_BATCH_SIZE="10"
-export OLLAMA_RETRY_COUNT="2"
-python app.py
+python -m server.app
 ```
 
 이 앱은 로컬 키워드 기반 fallback을 사용하지 않습니다. `/api/run`은 반드시 로컬 Ollama API를 호출하고, 모델이 다음 형식의 JSON을 반환해야 점수를 계산합니다.
@@ -110,11 +109,10 @@ $env:OLLAMA_READ_TIMEOUT_SECONDS="600"
 $env:OLLAMA_NUM_CTX="8192"
 $env:OLLAMA_NUM_PREDICT="256"
 $env:OLLAMA_BATCH_SIZE="10"
-$env:OLLAMA_RETRY_COUNT="2"
-python app.py
+python -m server.app
 ```
 
-첫 실행은 모델 다운로드와 로딩 때문에 오래 걸릴 수 있습니다. 기본 read timeout은 `600`초입니다. Ollama 입력 프롬프트가 잘리지 않도록 이메일은 기본 10개씩 나누어 분석하고, 빈 응답이나 깨진 JSON은 배치별로 재시도합니다.
+첫 실행은 모델 다운로드와 로딩 때문에 오래 걸릴 수 있습니다. 기본 read timeout은 `600`초입니다. Ollama 입력 프롬프트가 잘리지 않도록 이메일은 기본 10개씩 나누어 분석합니다.
 
 ## 점수 방식
 
