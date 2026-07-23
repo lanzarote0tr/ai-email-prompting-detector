@@ -23,6 +23,12 @@ COPY requirements.txt .
 RUN python3 -m venv /opt/venv \
     && pip install --no-cache-dir -r requirements.txt
 
+RUN ollama serve & \
+    OLLAMA_PID="$!" \
+    && until curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; do sleep 1; done \
+    && ollama pull "$OLLAMA_MODEL" \
+    && kill "$OLLAMA_PID"
+
 COPY . .
 RUN chmod +x /app/docker-entrypoint.sh
 
