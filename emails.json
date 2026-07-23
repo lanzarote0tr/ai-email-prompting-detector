@@ -1,0 +1,1370 @@
+[
+  {
+    "id": 1,
+    "sender": "teacher.kim@dimigo.hs.kr",
+    "subject": "네트워크 수행평가 채점 기준 안내",
+    "body": "네트워크 수행평가 채점 기준을 공유합니다. 제출 파일명은 학번_이름_주제 형식으로 맞춰 주세요. 질문은 수업 시간 또는 Classroom 댓글로 남기면 됩니다.",
+    "date": "2026-07-10 08:12",
+    "attachment": "네트워크_수행평가_기준.pdf",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 2,
+    "sender": "teacher.park@dimigo.hs.kr",
+    "subject": "정보보안 실습실 사용 신청 확인",
+    "body": "7월 15일 18:00부터 20:00까지 정보보안 실습실 사용 신청이 승인되었습니다. 퇴실 전 장비 전원과 출입문 잠금 상태를 확인해 주세요.",
+    "date": "2026-07-10 09:24",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 3,
+    "sender": "notice@dimigo.hs.kr",
+    "subject": "7월 급식 만족도 조사 안내",
+    "body": "이번 달 급식 만족도 조사가 학생 포털에 게시되었습니다. 조사는 7월 18일까지 참여할 수 있으며, 학교 포털에 직접 접속해 응답하면 됩니다.",
+    "date": "2026-07-10 10:37",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 4,
+    "sender": "billing@notion-payment.site",
+    "subject": "Notion 결제 실패 안내",
+    "body": "등록된 카드 승인에 실패했습니다. 워크스페이스 중단을 막으려면 7월 15일까지 결제 정보를 다시 입력하세요: https://notion-payment.site/update",
+    "date": "2026-07-10 11:48",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "공식 도메인과 다른 발신 주소",
+      "결제 정보 재입력 요구",
+      "외부 링크"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 5,
+    "sender": "admin@dimigo.hs.kr",
+    "subject": "교내 무선망 점검 일정",
+    "body": "7월 17일 22:00부터 약 30분 동안 교내 무선망 점검이 진행됩니다. 점검 중 일부 AP 연결이 끊길 수 있습니다.",
+    "date": "2026-07-10 13:05",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 6,
+    "sender": "noreply@classroom.google.com",
+    "subject": "새 과제: 패킷 캡처 분석 보고서",
+    "body": "정보보안 수업에 새 과제가 게시되었습니다. 마감일은 7월 21일 23:59입니다. 과제 내용은 Google Classroom에서 확인해 주세요.",
+    "date": "2026-07-10 14:19",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 7,
+    "sender": "calendar-notification@google.com",
+    "subject": "초대: CTF 플랫폼 점검 회의",
+    "body": "CTF 플랫폼 점검 회의가 7월 16일 19:00에 예정되어 있습니다. 참석자는 회의 전까지 담당 이슈의 진행 상황을 문서에 정리해 주세요.",
+    "date": "2026-07-10 16:33",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 8,
+    "sender": "github@github.com",
+    "subject": "[dimi-security/ctf-platform] Pull request review requested",
+    "body": "고준형님이 pull request #24 리뷰를 요청했습니다. 변경 사항은 문제 업로드 권한 검증과 관리자 페이지 테스트 코드입니다. GitHub에서 diff를 확인해 주세요.",
+    "date": "2026-07-10 18:51",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 9,
+    "sender": "security@accounts-google.kr",
+    "subject": "Google 계정 보안 확인 필요",
+    "body": "최근 로그인 기록 확인이 필요합니다. 아래 보안 확인 페이지에서 비밀번호를 입력하면 계정 제한이 해제됩니다: https://accounts-google.kr/security/check",
+    "date": "2026-07-11 08:12",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "공식 도메인과 유사한 가짜 도메인",
+      "비밀번호 입력 요구",
+      "계정 제한 언급"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 10,
+    "sender": "github@github.com",
+    "subject": "[dimi-security/mail-filter] Failed workflow run",
+    "body": "GitHub Actions workflow가 main 브랜치에서 실패했습니다. 실패한 job은 lint이며, 자세한 로그는 repository의 Actions 탭에서 확인할 수 있습니다.",
+    "date": "2026-07-11 09:24",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 11,
+    "sender": "security@hancom.com",
+    "subject": "사내 계정 비밀번호 만료 예정",
+    "body": "사내 계정 비밀번호가 5일 후 만료됩니다. 비밀번호는 사내 포털 주소를 직접 입력해 변경해 주세요. 메일 회신으로 비밀번호를 보내지 마세요.",
+    "date": "2026-07-11 10:37",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "직접 접속 안내",
+      "비밀번호 회신 금지"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 12,
+    "sender": "security@hancom.com",
+    "subject": "해외 로그인 시도 차단 알림",
+    "body": "오늘 09:43 싱가포르 IP에서 로그인 시도가 있었고 정책에 따라 차단되었습니다. 본인 활동이 아니라면 보안 포털에서 최근 로그인 기록을 확인해 주세요.",
+    "date": "2026-07-11 11:48",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "직접 접속 안내",
+      "자격 증명 요구 없음"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 13,
+    "sender": "it-helpdesk@hancom.com",
+    "subject": "노트북 교체 일정 확인",
+    "body": "신청하신 개발용 노트북 교체 일정은 7월 19일 14:00입니다. 기존 장비와 충전기를 지참해 IT 지원실로 방문해 주세요.",
+    "date": "2026-07-11 13:05",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 14,
+    "sender": "it-helpdesk@hancom.com",
+    "subject": "VPN 접속 장애 처리 완료",
+    "body": "오전에 접수한 VPN 접속 장애 티켓 HD-2607-118이 처리되었습니다. 같은 문제가 반복되면 티켓 번호를 포함해 다시 문의해 주세요.",
+    "date": "2026-07-11 14:19",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 15,
+    "sender": "github-security@github-auth.com",
+    "subject": "Repository access review",
+    "body": "dimi-security 조직의 repository 접근 권한 검토가 필요합니다. 24시간 내 GitHub 계정으로 로그인해 토큰 권한을 확인하세요: https://github-auth.com/org/review",
+    "date": "2026-07-11 16:33",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "GitHub 사칭 도메인",
+      "로그인 유도",
+      "권한 검토 긴급성"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 16,
+    "sender": "finance@hancom.com",
+    "subject": "법인카드 사용 내역 확인",
+    "body": "7월 12일 JetBrains 구독 결제 129,000원이 승인되었습니다. 업무 사용 내역이면 법인카드 시스템에 사용 목적을 등록해 주세요.",
+    "date": "2026-07-11 18:51",
+    "attachment": "card_statement_0712.pdf",
+    "is_malicious": false,
+    "indicators": [
+      "금융 관련 메일",
+      "공식 발신 도메인",
+      "카드번호 요구 없음"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 17,
+    "sender": "finance@hancom.com",
+    "subject": "거래처 계좌 변경 검토 요청",
+    "body": "바이트웍스에서 계좌 변경 서류를 제출했습니다. 실제 지급 계좌 변경은 기존 담당자 전화번호로 유선 확인한 뒤 승인해 주세요.",
+    "date": "2026-07-12 08:12",
+    "attachment": "계좌변경_검토자료.pdf",
+    "is_malicious": false,
+    "indicators": [
+      "계좌 관련 메일",
+      "유선 확인 요구",
+      "공식 내부 발신"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 18,
+    "sender": "hr@hancom.com",
+    "subject": "하계 인턴 출입증 수령 안내",
+    "body": "하계 인턴 출입증은 7월 15일부터 인사팀에서 수령할 수 있습니다. 본인 확인을 위해 학생증 또는 신분증을 지참해 주세요.",
+    "date": "2026-07-12 09:24",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 19,
+    "sender": "it-helpdesk@hancom-support.net",
+    "subject": "VPN 프로필 재등록 요청",
+    "body": "VPN 인증서 갱신 작업으로 계정 재확인이 필요합니다. 아래 페이지에서 사번, 비밀번호, OTP 코드를 입력해 주세요: https://hancom-support.net/vpn",
+    "date": "2026-07-12 10:37",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "외부 도메인",
+      "비밀번호와 OTP 요구",
+      "내부 IT 사칭"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 20,
+    "sender": "hr@hancom.com",
+    "subject": "보안 서약서 제출 확인",
+    "body": "제출하신 보안 서약서가 정상 접수되었습니다. 서류 보완이 필요한 경우 인사팀 담당자가 사내 메신저로 별도 연락할 예정입니다.",
+    "date": "2026-07-12 11:48",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 21,
+    "sender": "notify@notion.so",
+    "subject": "Workspace invitation: dimi-security",
+    "body": "dimi-security 워크스페이스에 초대되었습니다. 초대가 예상된 경우 Notion 앱 또는 notion.so에 직접 접속해 확인할 수 있습니다.",
+    "date": "2026-07-12 13:05",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "외부 서비스 알림",
+      "공식 도메인",
+      "직접 접속 가능"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 22,
+    "sender": "notify@notion.so",
+    "subject": "Page updated: CTF 운영 체크리스트",
+    "body": "CTF 운영 체크리스트 페이지가 업데이트되었습니다. 변경 내용은 문제 검수 일정과 참가자 안내 문구입니다.",
+    "date": "2026-07-12 14:19",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 23,
+    "sender": "no-reply@accounts.google.com",
+    "subject": "보안 알림",
+    "body": "Google 계정 ethan.cho@example.com에서 새 로그인이 감지되었습니다. 기기: macOS, 위치: 대한민국. 본인이 아니라면 Google 계정 보안 페이지를 직접 열어 최근 활동을 확인하세요.",
+    "date": "2026-07-12 16:33",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "직접 접속 안내",
+      "비밀번호 입력 요구 없음"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 24,
+    "sender": "finance@hancom-payments.com",
+    "subject": "거래처 지급 계좌 변경",
+    "body": "바이트웍스 담당자가 계좌 변경을 요청했습니다. 오늘 지급 건부터 첨부 계좌로 처리해 주세요. 확인 전화는 어렵다고 합니다.",
+    "date": "2026-07-12 18:51",
+    "attachment": "account_change.zip",
+    "is_malicious": true,
+    "indicators": [
+      "유사 도메인",
+      "계좌 변경 요청",
+      "검증 회피"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 25,
+    "sender": "no-reply@accounts.google.com",
+    "subject": "복구 이메일 변경 확인",
+    "body": "Google 계정의 복구 이메일이 변경되었습니다. 본인이 변경했다면 별도 조치가 필요하지 않습니다. 변경한 적이 없다면 Google 계정 보안 페이지에서 확인하세요.",
+    "date": "2026-07-13 08:12",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "직접 접속 안내"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 26,
+    "sender": "library@citylib.or.kr",
+    "subject": "예약 도서 도착 안내",
+    "body": "예약하신 도서 '네트워크 보안 입문'이 도착했습니다. 보관 기한은 7월 18일까지이며, 회원증을 지참해 자료실에서 수령해 주세요.",
+    "date": "2026-07-13 09:24",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 27,
+    "sender": "library@citylib.or.kr",
+    "subject": "대출 연장 처리 결과",
+    "body": "요청하신 도서 2권의 대출 기간이 7월 24일까지 연장되었습니다. 이미 예약자가 있는 도서는 추가 연장이 제한됩니다.",
+    "date": "2026-07-13 10:37",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 28,
+    "sender": "ceo.office@hancom-mail.com",
+    "subject": "지금 처리 부탁합니다",
+    "body": "회의 중이라 통화가 어렵습니다. 행사 경품용 모바일 상품권 30만원을 먼저 구매하고 핀 번호를 회신해 주세요. 오후에 바로 정산하겠습니다.",
+    "date": "2026-07-13 11:48",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "임원 사칭",
+      "상품권 구매 요청",
+      "비밀 유지와 통화 회피"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 29,
+    "sender": "mentor@swacademy.or.kr",
+    "subject": "멘토링 오리엔테이션 자료",
+    "body": "청소년 SW 멘토링 오리엔테이션 자료를 첨부합니다. 첫 모임은 7월 20일 19:00이며, 접속 링크는 행사 전날 별도 안내됩니다.",
+    "date": "2026-07-13 13:05",
+    "attachment": "orientation.pdf",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 30,
+    "sender": "contest@kisia.or.kr",
+    "subject": "정보보호 경진대회 접수 확인",
+    "body": "정보보호 경진대회 참가 신청이 접수되었습니다. 팀명과 참가자 명단을 확인해 주시고, 변경 사항은 7월 19일까지 운영 사무국에 알려 주세요.",
+    "date": "2026-07-13 14:19",
+    "attachment": "registration_receipt.pdf",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 31,
+    "sender": "ops@cloudworks.co.kr",
+    "subject": "서버 점검 사전 안내",
+    "body": "7월 16일 02:00부터 03:00까지 일부 인스턴스의 네트워크 점검이 진행됩니다. 점검 중 재부팅은 예정되어 있지 않습니다.",
+    "date": "2026-07-13 16:33",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 32,
+    "sender": "billing@cloudworks.co.kr",
+    "subject": "6월 클라우드 이용 요금 명세서",
+    "body": "6월 클라우드 이용 요금 명세서를 첨부합니다. 결제 예정일은 7월 20일이며, 등록된 결제수단으로 자동 결제됩니다.",
+    "date": "2026-07-13 18:51",
+    "attachment": "cloudworks_invoice_2026-06.pdf",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 33,
+    "sender": "classroom@google-classroom.kr",
+    "subject": "제출 누락 과제 확인",
+    "body": "네트워크 수행평가 제출 기록이 확인되지 않았습니다. 아래 페이지에서 Google 계정으로 다시 로그인해 제출 상태를 확인하세요: https://google-classroom.kr/submit",
+    "date": "2026-07-14 08:12",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "Google Classroom 사칭",
+      "로그인 유도",
+      "가짜 도메인"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 34,
+    "sender": "support@slack.com",
+    "subject": "New sign-in to dimi-security Slack",
+    "body": "A new sign-in to the dimi-security Slack workspace was detected from Chrome on macOS. If this was you, no action is needed.",
+    "date": "2026-07-14 09:24",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "자격 증명 요구 없음"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 35,
+    "sender": "zoom-noreply@zoom.us",
+    "subject": "회의 녹화 처리 완료",
+    "body": "7월 14일 진행한 프로젝트 회의 녹화 파일 처리가 완료되었습니다. Zoom 계정에 로그인해 Recordings 메뉴에서 확인할 수 있습니다.",
+    "date": "2026-07-14 10:37",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 36,
+    "sender": "delivery@cjlogistics.com",
+    "subject": "택배 배송 완료 안내",
+    "body": "한컴 도서몰에서 발송한 택배가 7월 14일 16:22 경비실에 배송 완료되었습니다. 운송장 번호는 3648-2607-1182입니다.",
+    "date": "2026-07-14 11:48",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 37,
+    "sender": "order@kyobobook.co.kr",
+    "subject": "주문 상품 출고 안내",
+    "body": "주문하신 '리눅스 커널 구조와 원리'가 출고되었습니다. 배송 조회는 교보문고 주문 내역에서 확인할 수 있습니다.",
+    "date": "2026-07-14 13:05",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 38,
+    "sender": "delivery@cjlogi-track.com",
+    "subject": "주소 오류로 배송 보류",
+    "body": "수취인 주소 확인이 필요합니다. 오늘 안에 배송비 1,000원을 결제하지 않으면 반송 처리됩니다: https://cjlogi-track.com/pay",
+    "date": "2026-07-14 14:19",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "택배사 유사 도메인",
+      "소액 결제 유도",
+      "긴급성"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 39,
+    "sender": "teacher.kim@dimigo.hs.kr",
+    "subject": "네트워크 수행평가 채점 기준 안내 - 최종 안내",
+    "body": "네트워크 수행평가 채점 기준을 공유합니다. 제출 파일명은 학번_이름_주제 형식으로 맞춰 주세요. 질문은 수업 시간 또는 Classroom 댓글로 남기면 됩니다. 예시 파일은 Classroom 자료실에 추가로 게시되어 있습니다.",
+    "date": "2026-07-14 16:33",
+    "attachment": "네트워크_수행평가_기준.pdf",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 40,
+    "sender": "teacher.park@dimigo.hs.kr",
+    "subject": "정보보안 실습실 사용 신청 확인 - 최종 안내",
+    "body": "7월 15일 18:00부터 20:00까지 정보보안 실습실 사용 신청이 승인되었습니다. 퇴실 전 장비 전원과 출입문 잠금 상태를 확인해 주세요. 사용 인원 변경이 있으면 실습실 사용 신청서의 비고란에 남겨 주세요.",
+    "date": "2026-07-14 18:51",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 41,
+    "sender": "notice@dimigo.hs.kr",
+    "subject": "7월 급식 만족도 조사 안내 - 최종 안내",
+    "body": "이번 달 급식 만족도 조사가 학생 포털에 게시되었습니다. 조사는 7월 18일까지 참여할 수 있으며, 학교 포털에 직접 접속해 응답하면 됩니다. 마감 시간은 18:00이며, 응답 후 수정은 학생 포털에서 한 번만 가능합니다.",
+    "date": "2026-07-15 08:12",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 42,
+    "sender": "recruit@hancom-career.com",
+    "subject": "채용 평가 자료 확인 요청",
+    "body": "인턴 전환 평가 자료를 첨부했습니다. 문서가 열리지 않으면 콘텐츠 사용을 허용한 뒤 확인해 주세요.",
+    "date": "2026-07-15 09:24",
+    "attachment": "evaluation_form.xlsm",
+    "is_malicious": true,
+    "indicators": [
+      "유사 채용 도메인",
+      "매크로 문서",
+      "콘텐츠 사용 유도"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 43,
+    "sender": "admin@dimigo.hs.kr",
+    "subject": "교내 무선망 점검 일정 - 최종 안내",
+    "body": "7월 17일 22:00부터 약 30분 동안 교내 무선망 점검이 진행됩니다. 점검 중 일부 AP 연결이 끊길 수 있습니다. 점검 이후에도 접속이 불안정하면 사용 장소와 AP 이름을 포함해 신고해 주세요.",
+    "date": "2026-07-15 10:37",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 44,
+    "sender": "noreply@classroom.google.com",
+    "subject": "새 과제: 패킷 캡처 분석 보고서 - 최종 안내",
+    "body": "정보보안 수업에 새 과제가 게시되었습니다. 마감일은 7월 21일 23:59입니다. 과제 내용은 Google Classroom에서 확인해 주세요. 제출 전 파일이 정상적으로 열리는지 확인해 주세요.",
+    "date": "2026-07-15 11:48",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 45,
+    "sender": "calendar-notification@google.com",
+    "subject": "초대: CTF 플랫폼 점검 회의 - 최종 안내",
+    "body": "CTF 플랫폼 점검 회의가 7월 16일 19:00에 예정되어 있습니다. 참석자는 회의 전까지 담당 이슈의 진행 상황을 문서에 정리해 주세요. 회의록은 종료 후 공유 문서에 정리됩니다.",
+    "date": "2026-07-15 13:05",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 46,
+    "sender": "github@github.com",
+    "subject": "[dimi-security/ctf-platform] Pull request review requested 최종 안내",
+    "body": "고준형님이 pull request #24 리뷰를 요청했습니다. 변경 사항은 문제 업로드 권한 검증과 관리자 페이지 테스트 코드입니다. GitHub에서 diff를 확인해 주세요. 리뷰가 늦어지면 담당 이슈에 예상 완료 시간을 남겨 주세요.",
+    "date": "2026-07-15 14:19",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 47,
+    "sender": "notice@dimigo-portal.com",
+    "subject": "학생 포털 세션 만료",
+    "body": "학생 포털 계정의 세션이 만료되었습니다. 아래 링크에서 학번과 비밀번호를 입력해 계정을 다시 활성화하세요: https://dimigo-portal.com/login",
+    "date": "2026-07-15 16:33",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "학교 포털 사칭",
+      "학번과 비밀번호 요구",
+      "유사 도메인"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 48,
+    "sender": "github@github.com",
+    "subject": "[dimi-security/mail-filter] Failed workflow run 최종 안내",
+    "body": "GitHub Actions workflow가 main 브랜치에서 실패했습니다. 실패한 job은 lint이며, 자세한 로그는 repository의 Actions 탭에서 확인할 수 있습니다. 같은 실패가 반복되면 최근 변경된 설정 파일을 먼저 확인해 주세요.",
+    "date": "2026-07-15 18:51",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 49,
+    "sender": "security@hancom.com",
+    "subject": "사내 계정 비밀번호 만료 예정 - 최종 안내",
+    "body": "사내 계정 비밀번호가 5일 후 만료됩니다. 비밀번호는 사내 포털 주소를 직접 입력해 변경해 주세요. 메일 회신으로 비밀번호를 보내지 마세요. 변경 후 기존 세션은 순차적으로 로그아웃될 수 있습니다.",
+    "date": "2026-07-16 08:12",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "직접 접속 안내",
+      "비밀번호 회신 금지"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 50,
+    "sender": "security@hancom.com",
+    "subject": "해외 로그인 시도 차단 알림 - 최종 안내",
+    "body": "오늘 09:43 싱가포르 IP에서 로그인 시도가 있었고 정책에 따라 차단되었습니다. 본인 활동이 아니라면 보안 포털에서 최근 로그인 기록을 확인해 주세요. 차단된 시도는 보안 정책에 따라 30일 동안 기록됩니다.",
+    "date": "2026-07-16 09:24",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "직접 접속 안내",
+      "자격 증명 요구 없음"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 51,
+    "sender": "support@slack-security.com",
+    "subject": "Slack workspace access suspended",
+    "body": "dimi-security workspace 접근이 일시 중지되었습니다. 아래 링크에서 Slack 계정으로 로그인하면 접근 제한이 해제됩니다: https://slack-security.com/restore",
+    "date": "2026-07-16 10:37",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "Slack 사칭 도메인",
+      "로그인 유도",
+      "접근 제한 언급"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 52,
+    "sender": "it-helpdesk@hancom.com",
+    "subject": "노트북 교체 일정 확인 - 최종 안내",
+    "body": "신청하신 개발용 노트북 교체 일정은 7월 19일 14:00입니다. 기존 장비와 충전기를 지참해 IT 지원실로 방문해 주세요. 자료 이전이 필요한 경우 방문 전에 백업을 완료해 주세요.",
+    "date": "2026-07-16 11:48",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 53,
+    "sender": "it-helpdesk@hancom.com",
+    "subject": "VPN 접속 장애 처리 완료 - 최종 안내",
+    "body": "오전에 접수한 VPN 접속 장애 티켓 HD-2607-118이 처리되었습니다. 같은 문제가 반복되면 티켓 번호를 포함해 다시 문의해 주세요. 처리 내역은 헬프데스크 티켓에서 확인할 수 있습니다.",
+    "date": "2026-07-16 13:05",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 54,
+    "sender": "finance@hancom.com",
+    "subject": "법인카드 사용 내역 확인 - 최종 안내",
+    "body": "7월 12일 JetBrains 구독 결제 129,000원이 승인되었습니다. 업무 사용 내역이면 법인카드 시스템에 사용 목적을 등록해 주세요. 영수증 원본이 필요한 결제는 재무 시스템에 별도 첨부해 주세요.",
+    "date": "2026-07-16 14:19",
+    "attachment": "card_statement_0712.pdf",
+    "is_malicious": false,
+    "indicators": [
+      "금융 관련 메일",
+      "공식 발신 도메인",
+      "카드번호 요구 없음"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 55,
+    "sender": "finance@hancom.com",
+    "subject": "거래처 계좌 변경 검토 요청 - 최종 안내",
+    "body": "바이트웍스에서 계좌 변경 서류를 제출했습니다. 실제 지급 계좌 변경은 기존 담당자 전화번호로 유선 확인한 뒤 승인해 주세요. 승인 전까지 기존 계좌 정보는 그대로 유지됩니다.",
+    "date": "2026-07-16 16:33",
+    "attachment": "계좌변경_검토자료.pdf",
+    "is_malicious": false,
+    "indicators": [
+      "계좌 관련 메일",
+      "유선 확인 요구",
+      "공식 내부 발신"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 56,
+    "sender": "tax@nts-refund.kr",
+    "subject": "환급금 지급 계좌 확인",
+    "body": "2026년 상반기 환급금 지급 대상입니다. 지급 계좌 확인을 위해 주민등록번호와 계좌번호를 입력해 주세요: https://nts-refund.kr/apply",
+    "date": "2026-07-16 18:51",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "기관 사칭",
+      "주민등록번호 요구",
+      "계좌번호 요구"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 57,
+    "sender": "hr@hancom.com",
+    "subject": "하계 인턴 출입증 수령 안내 - 최종 안내",
+    "body": "하계 인턴 출입증은 7월 15일부터 인사팀에서 수령할 수 있습니다. 본인 확인을 위해 학생증 또는 신분증을 지참해 주세요. 대리 수령은 불가합니다.",
+    "date": "2026-07-17 08:12",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 58,
+    "sender": "hr@hancom.com",
+    "subject": "보안 서약서 제출 확인 - 최종 안내",
+    "body": "제출하신 보안 서약서가 정상 접수되었습니다. 서류 보완이 필요한 경우 인사팀 담당자가 사내 메신저로 별도 연락할 예정입니다. 접수 상태는 인사 포털의 제출 서류 메뉴에도 반영됩니다.",
+    "date": "2026-07-17 09:24",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 59,
+    "sender": "notify@notion.so",
+    "subject": "Workspace invitation: dimi-security - 최종 안내",
+    "body": "dimi-security 워크스페이스에 초대되었습니다. 초대가 예상된 경우 Notion 앱 또는 notion.so에 직접 접속해 확인할 수 있습니다. 초대가 예상되지 않았다면 워크스페이스 관리자에게 먼저 확인하세요.",
+    "date": "2026-07-17 10:37",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "외부 서비스 알림",
+      "공식 도메인",
+      "직접 접속 가능"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 60,
+    "sender": "notify@notion.so",
+    "subject": "Page updated: CTF 운영 체크리스트 - 최종 안내",
+    "body": "CTF 운영 체크리스트 페이지가 업데이트되었습니다. 변경 내용은 문제 검수 일정과 참가자 안내 문구입니다. 변경된 항목은 페이지 기록에서 확인할 수 있습니다.",
+    "date": "2026-07-17 11:48",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 61,
+    "sender": "admin@cloudworks-billing.com",
+    "subject": "클라우드 인스턴스 삭제 예정",
+    "body": "미납 요금으로 인해 오늘 18:00 이후 인스턴스가 삭제됩니다. 서비스 유지를 위해 결제 정보를 갱신하세요: https://cloudworks-billing.com/pay",
+    "date": "2026-07-17 13:05",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "클라우드 서비스 사칭",
+      "결제 정보 요구",
+      "삭제 예정 긴급성"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 62,
+    "sender": "no-reply@accounts.google.com",
+    "subject": "보안 알림 - 최종 안내",
+    "body": "Google 계정 ethan.cho@example.com에서 새 로그인이 감지되었습니다. 기기: macOS, 위치: 대한민국. 본인이 아니라면 Google 계정 보안 페이지를 직접 열어 최근 활동을 확인하세요. 알림 세부 정보는 Google 계정의 보안 활동 메뉴에 남아 있습니다.",
+    "date": "2026-07-17 14:19",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "직접 접속 안내",
+      "비밀번호 입력 요구 없음"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 63,
+    "sender": "no-reply@accounts.google.com",
+    "subject": "복구 이메일 변경 확인 - 최종 안내",
+    "body": "Google 계정의 복구 이메일이 변경되었습니다. 본인이 변경했다면 별도 조치가 필요하지 않습니다. 변경한 적이 없다면 Google 계정 보안 페이지에서 확인하세요. 복구 정보 변경 내역은 Google 계정 설정에서 확인할 수 있습니다.",
+    "date": "2026-07-17 16:33",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "직접 접속 안내"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 64,
+    "sender": "library@citylib.or.kr",
+    "subject": "예약 도서 도착 안내 - 최종 안내",
+    "body": "예약하신 도서 '네트워크 보안 입문'이 도착했습니다. 보관 기한은 7월 18일까지이며, 회원증을 지참해 자료실에서 수령해 주세요. 기한 내 미수령 시 다음 예약자에게 순번이 넘어갑니다.",
+    "date": "2026-07-17 18:51",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 65,
+    "sender": "library@citylib.or.kr",
+    "subject": "대출 연장 처리 결과 - 최종 안내",
+    "body": "요청하신 도서 2권의 대출 기간이 7월 24일까지 연장되었습니다. 이미 예약자가 있는 도서는 추가 연장이 제한됩니다. 반납 예정일 전날 알림 문자가 한 번 더 발송됩니다.",
+    "date": "2026-07-18 08:12",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 66,
+    "sender": "shared@drive-google.net",
+    "subject": "공유 문서: 문제 출제 계획",
+    "body": "문제 출제 계획 문서가 공유되었습니다. 열람 권한 확인을 위해 Google 계정으로 다시 로그인해 주세요: https://drive-google.net/doc/2607",
+    "date": "2026-07-18 09:24",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "Google Drive 사칭",
+      "재로그인 요구",
+      "가짜 도메인"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 67,
+    "sender": "mentor@swacademy.or.kr",
+    "subject": "멘토링 오리엔테이션 자료 - 최종 안내",
+    "body": "청소년 SW 멘토링 오리엔테이션 자료를 첨부합니다. 첫 모임은 7월 20일 19:00이며, 접속 링크는 행사 전날 별도 안내됩니다. 자료에는 일정표와 사전 준비 항목이 포함되어 있습니다.",
+    "date": "2026-07-18 10:37",
+    "attachment": "orientation.pdf",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 68,
+    "sender": "contest@kisia.or.kr",
+    "subject": "정보보호 경진대회 접수 확인 - 최종 안내",
+    "body": "정보보호 경진대회 참가 신청이 접수되었습니다. 팀명과 참가자 명단을 확인해 주시고, 변경 사항은 7월 19일까지 운영 사무국에 알려 주세요. 참가 확인서는 운영 사무국 검토 후 발급됩니다.",
+    "date": "2026-07-18 11:48",
+    "attachment": "registration_receipt.pdf",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 69,
+    "sender": "ops@cloudworks.co.kr",
+    "subject": "서버 점검 사전 안내 - 최종 안내",
+    "body": "7월 16일 02:00부터 03:00까지 일부 인스턴스의 네트워크 점검이 진행됩니다. 점검 중 재부팅은 예정되어 있지 않습니다. 서비스 상태 페이지에도 같은 내용이 공지됩니다.",
+    "date": "2026-07-18 13:05",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 70,
+    "sender": "scanner@office365-alerts.com",
+    "subject": "메일 저장 공간 초과",
+    "body": "메일함 용량이 98%에 도달했습니다. 아래 페이지에서 오래된 메일 자동 정리를 승인하지 않으면 수신이 중단될 수 있습니다: https://office365-alerts.com/quota",
+    "date": "2026-07-18 14:19",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "Microsoft 365 사칭",
+      "로그인 유도",
+      "수신 중단 언급"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 71,
+    "sender": "billing@cloudworks.co.kr",
+    "subject": "6월 클라우드 이용 요금 명세서 - 최종 안내",
+    "body": "6월 클라우드 이용 요금 명세서를 첨부합니다. 결제 예정일은 7월 20일이며, 등록된 결제수단으로 자동 결제됩니다. 세금계산서는 등록된 담당자 이메일로 별도 발송됩니다.",
+    "date": "2026-07-18 16:33",
+    "attachment": "cloudworks_invoice_2026-06.pdf",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 72,
+    "sender": "support@slack.com",
+    "subject": "New sign-in to dimi-security Slack - 최종 안내",
+    "body": "A new sign-in to the dimi-security Slack workspace was detected from Chrome on macOS. If this was you, no action is needed. 알림 세부 정보는 Slack 앱의 보안 알림 화면에서도 확인할 수 있습니다.",
+    "date": "2026-07-18 18:51",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "자격 증명 요구 없음"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 73,
+    "sender": "zoom-noreply@zoom.us",
+    "subject": "회의 녹화 처리 완료 - 최종 안내",
+    "body": "7월 14일 진행한 프로젝트 회의 녹화 파일 처리가 완료되었습니다. Zoom 계정에 로그인해 Recordings 메뉴에서 확인할 수 있습니다. 세부 내용은 기존 안내 채널에서 확인할 수 있습니다.",
+    "date": "2026-07-19 08:12",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 74,
+    "sender": "delivery@cjlogistics.com",
+    "subject": "택배 배송 완료 안내 - 최종 안내",
+    "body": "한컴 도서몰에서 발송한 택배가 7월 14일 16:22 경비실에 배송 완료되었습니다. 운송장 번호는 3648-2607-1182입니다. 배송 관련 문의는 주문처의 주문 내역에서 접수해 주세요.",
+    "date": "2026-07-19 09:24",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 75,
+    "sender": "vendor@byteworks-order.com",
+    "subject": "수정 견적서 전달",
+    "body": "요청하신 수정 견적서를 첨부했습니다. 보안 보기에서 콘텐츠 사용을 눌러야 금액이 표시됩니다.",
+    "date": "2026-07-19 10:37",
+    "attachment": "revised_quote.xlsm",
+    "is_malicious": true,
+    "indicators": [
+      "거래처 사칭",
+      "매크로 문서",
+      "콘텐츠 사용 유도"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 76,
+    "sender": "order@kyobobook.co.kr",
+    "subject": "주문 상품 출고 안내 - 최종 안내",
+    "body": "주문하신 '리눅스 커널 구조와 원리'가 출고되었습니다. 배송 조회는 교보문고 주문 내역에서 확인할 수 있습니다. 배송지 변경은 출고 이후에는 제한됩니다.",
+    "date": "2026-07-19 11:48",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 77,
+    "sender": "teacher.kim@dimigo.hs.kr",
+    "subject": "네트워크 수행평가 채점 기준 안내 - 일정 변경",
+    "body": "네트워크 수행평가 채점 기준을 공유합니다. 제출 파일명은 학번_이름_주제 형식으로 맞춰 주세요. 질문은 수업 시간 또는 Classroom 댓글로 남기면 됩니다. 예시 파일은 Classroom 자료실에 추가로 게시되어 있습니다. 발송 기준 시각은 2026-07-19 13:05입니다.",
+    "date": "2026-07-19 13:05",
+    "attachment": "네트워크_수행평가_기준.pdf",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 78,
+    "sender": "teacher.park@dimigo.hs.kr",
+    "subject": "정보보안 실습실 사용 신청 확인 - 일정 변경",
+    "body": "7월 15일 18:00부터 20:00까지 정보보안 실습실 사용 신청이 승인되었습니다. 퇴실 전 장비 전원과 출입문 잠금 상태를 확인해 주세요. 사용 인원 변경이 있으면 실습실 사용 신청서의 비고란에 남겨 주세요. 발송 기준 시각은 2026-07-19 14:19입니다.",
+    "date": "2026-07-19 14:19",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 79,
+    "sender": "notice@dimigo.hs.kr",
+    "subject": "7월 급식 만족도 조사 안내 - 일정 변경",
+    "body": "이번 달 급식 만족도 조사가 학생 포털에 게시되었습니다. 조사는 7월 18일까지 참여할 수 있으며, 학교 포털에 직접 접속해 응답하면 됩니다. 마감 시간은 18:00이며, 응답 후 수정은 학생 포털에서 한 번만 가능합니다. 발송 기준 시각은 2026-07-19 16:33입니다.",
+    "date": "2026-07-19 16:33",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 80,
+    "sender": "security@kakao-login.net",
+    "subject": "카카오 계정 보호 조치",
+    "body": "비정상 로그인으로 계정 일부 기능이 제한되었습니다. 본인 확인을 위해 아래 페이지에서 비밀번호를 다시 입력해 주세요: https://kakao-login.net/protect",
+    "date": "2026-07-19 18:51",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "카카오 사칭 도메인",
+      "비밀번호 재입력 요구",
+      "계정 제한 언급"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 81,
+    "sender": "admin@dimigo.hs.kr",
+    "subject": "교내 무선망 점검 일정 - 일정 변경",
+    "body": "7월 17일 22:00부터 약 30분 동안 교내 무선망 점검이 진행됩니다. 점검 중 일부 AP 연결이 끊길 수 있습니다. 점검 이후에도 접속이 불안정하면 사용 장소와 AP 이름을 포함해 신고해 주세요. 발송 기준 시각은 2026-07-20 08:12입니다.",
+    "date": "2026-07-20 08:12",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 82,
+    "sender": "noreply@classroom.google.com",
+    "subject": "새 과제: 패킷 캡처 분석 보고서 - 일정 변경",
+    "body": "정보보안 수업에 새 과제가 게시되었습니다. 마감일은 7월 21일 23:59입니다. 과제 내용은 Google Classroom에서 확인해 주세요. 제출 전 파일이 정상적으로 열리는지 확인해 주세요. 발송 기준 시각은 2026-07-20 09:24입니다.",
+    "date": "2026-07-20 09:24",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 83,
+    "sender": "calendar-notification@google.com",
+    "subject": "초대: CTF 플랫폼 점검 회의 - 일정 변경",
+    "body": "CTF 플랫폼 점검 회의가 7월 16일 19:00에 예정되어 있습니다. 참석자는 회의 전까지 담당 이슈의 진행 상황을 문서에 정리해 주세요. 회의록은 종료 후 공유 문서에 정리됩니다. 발송 기준 시각은 2026-07-20 10:37입니다.",
+    "date": "2026-07-20 10:37",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 84,
+    "sender": "payroll@hancom-hr.com",
+    "subject": "급여 명세서 확인",
+    "body": "이번 달 급여 명세서 확인을 위해 사내 계정 재인증이 필요합니다. 아래 링크에서 아이디와 비밀번호를 입력해 주세요: https://hancom-hr.com/payroll",
+    "date": "2026-07-20 11:48",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "HR 사칭",
+      "급여 명세서 미끼",
+      "사내 계정 정보 요구"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 85,
+    "sender": "github@github.com",
+    "subject": "[dimi-security/ctf-platform] Pull request review requested 일정 변경",
+    "body": "고준형님이 pull request #24 리뷰를 요청했습니다. 변경 사항은 문제 업로드 권한 검증과 관리자 페이지 테스트 코드입니다. GitHub에서 diff를 확인해 주세요. 리뷰가 늦어지면 담당 이슈에 예상 완료 시간을 남겨 주세요. 발송 기준 시각은 2026-07-20 13:05입니다.",
+    "date": "2026-07-20 13:05",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 86,
+    "sender": "github@github.com",
+    "subject": "[dimi-security/mail-filter] Failed workflow run 일정 변경",
+    "body": "GitHub Actions workflow가 main 브랜치에서 실패했습니다. 실패한 job은 lint이며, 자세한 로그는 repository의 Actions 탭에서 확인할 수 있습니다. 같은 실패가 반복되면 최근 변경된 설정 파일을 먼저 확인해 주세요. 발송 기준 시각은 2026-07-20 14:19입니다.",
+    "date": "2026-07-20 14:19",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 87,
+    "sender": "security@hancom.com",
+    "subject": "사내 계정 비밀번호 만료 예정 - 일정 변경",
+    "body": "사내 계정 비밀번호가 5일 후 만료됩니다. 비밀번호는 사내 포털 주소를 직접 입력해 변경해 주세요. 메일 회신으로 비밀번호를 보내지 마세요. 변경 후 기존 세션은 순차적으로 로그아웃될 수 있습니다. 발송 기준 시각은 2026-07-20 16:33입니다.",
+    "date": "2026-07-20 16:33",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "직접 접속 안내",
+      "비밀번호 회신 금지"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 88,
+    "sender": "security@hancom.com",
+    "subject": "해외 로그인 시도 차단 알림 - 일정 변경",
+    "body": "오늘 09:43 싱가포르 IP에서 로그인 시도가 있었고 정책에 따라 차단되었습니다. 본인 활동이 아니라면 보안 포털에서 최근 로그인 기록을 확인해 주세요. 차단된 시도는 보안 정책에 따라 30일 동안 기록됩니다. 발송 기준 시각은 2026-07-20 18:51입니다.",
+    "date": "2026-07-20 18:51",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "직접 접속 안내",
+      "자격 증명 요구 없음"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 89,
+    "sender": "webmaster@dimigo.hs.kr.notice-mail.com",
+    "subject": "출석 인정 서류 보완",
+    "body": "제출하신 출석 인정 서류에 누락 항목이 있습니다. 첨부 양식을 작성해 오늘 중 회신해 주세요.",
+    "date": "2026-07-21 08:12",
+    "attachment": "attendance_form.zip",
+    "is_malicious": true,
+    "indicators": [
+      "학교 사칭 복합 도메인",
+      "압축 첨부파일",
+      "당일 회신 요구"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 90,
+    "sender": "it-helpdesk@hancom.com",
+    "subject": "노트북 교체 일정 확인 - 일정 변경",
+    "body": "신청하신 개발용 노트북 교체 일정은 7월 19일 14:00입니다. 기존 장비와 충전기를 지참해 IT 지원실로 방문해 주세요. 자료 이전이 필요한 경우 방문 전에 백업을 완료해 주세요. 발송 기준 시각은 2026-07-21 09:24입니다.",
+    "date": "2026-07-21 09:24",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 91,
+    "sender": "it-helpdesk@hancom.com",
+    "subject": "VPN 접속 장애 처리 완료 - 일정 변경",
+    "body": "오전에 접수한 VPN 접속 장애 티켓 HD-2607-118이 처리되었습니다. 같은 문제가 반복되면 티켓 번호를 포함해 다시 문의해 주세요. 처리 내역은 헬프데스크 티켓에서 확인할 수 있습니다. 발송 기준 시각은 2026-07-21 10:37입니다.",
+    "date": "2026-07-21 10:37",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 92,
+    "sender": "finance@hancom.com",
+    "subject": "법인카드 사용 내역 확인 - 일정 변경",
+    "body": "7월 12일 JetBrains 구독 결제 129,000원이 승인되었습니다. 업무 사용 내역이면 법인카드 시스템에 사용 목적을 등록해 주세요. 영수증 원본이 필요한 결제는 재무 시스템에 별도 첨부해 주세요. 발송 기준 시각은 2026-07-21 11:48입니다.",
+    "date": "2026-07-21 11:48",
+    "attachment": "card_statement_0712.pdf",
+    "is_malicious": false,
+    "indicators": [
+      "금융 관련 메일",
+      "공식 발신 도메인",
+      "카드번호 요구 없음"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 93,
+    "sender": "finance@hancom.com",
+    "subject": "거래처 계좌 변경 검토 요청 - 일정 변경",
+    "body": "바이트웍스에서 계좌 변경 서류를 제출했습니다. 실제 지급 계좌 변경은 기존 담당자 전화번호로 유선 확인한 뒤 승인해 주세요. 승인 전까지 기존 계좌 정보는 그대로 유지됩니다. 발송 기준 시각은 2026-07-21 13:05입니다.",
+    "date": "2026-07-21 13:05",
+    "attachment": "계좌변경_검토자료.pdf",
+    "is_malicious": false,
+    "indicators": [
+      "계좌 관련 메일",
+      "유선 확인 요구",
+      "공식 내부 발신"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 94,
+    "sender": "help@zoom-meeting.co",
+    "subject": "Zoom 회의 녹화 공유",
+    "body": "오늘 회의 녹화가 공유되었습니다. 재생 전 계정 확인이 필요합니다: https://zoom-meeting.co/recording/260714",
+    "date": "2026-07-21 14:19",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "Zoom 사칭 도메인",
+      "계정 확인 유도",
+      "회의 녹화 미끼"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 95,
+    "sender": "hr@hancom.com",
+    "subject": "하계 인턴 출입증 수령 안내 - 일정 변경",
+    "body": "하계 인턴 출입증은 7월 15일부터 인사팀에서 수령할 수 있습니다. 본인 확인을 위해 학생증 또는 신분증을 지참해 주세요. 대리 수령은 불가합니다. 발송 기준 시각은 2026-07-21 16:33입니다.",
+    "date": "2026-07-21 16:33",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 96,
+    "sender": "hr@hancom.com",
+    "subject": "보안 서약서 제출 확인 - 일정 변경",
+    "body": "제출하신 보안 서약서가 정상 접수되었습니다. 서류 보완이 필요한 경우 인사팀 담당자가 사내 메신저로 별도 연락할 예정입니다. 접수 상태는 인사 포털의 제출 서류 메뉴에도 반영됩니다. 발송 기준 시각은 2026-07-21 18:51입니다.",
+    "date": "2026-07-21 18:51",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 97,
+    "sender": "notify@notion.so",
+    "subject": "Workspace invitation: dimi-security - 일정 변경",
+    "body": "dimi-security 워크스페이스에 초대되었습니다. 초대가 예상된 경우 Notion 앱 또는 notion.so에 직접 접속해 확인할 수 있습니다. 초대가 예상되지 않았다면 워크스페이스 관리자에게 먼저 확인하세요. 발송 기준 시각은 2026-07-22 08:12입니다.",
+    "date": "2026-07-22 08:12",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "외부 서비스 알림",
+      "공식 도메인",
+      "직접 접속 가능"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 98,
+    "sender": "support@notion-workspace.co",
+    "subject": "워크스페이스 소유권 확인",
+    "body": "dimi-security 워크스페이스 소유권 확인이 필요합니다. 아래 페이지에서 관리자 계정으로 로그인하지 않으면 공유 권한이 제한됩니다: https://notion-workspace.co/admin",
+    "date": "2026-07-22 09:24",
+    "attachment": "",
+    "is_malicious": true,
+    "indicators": [
+      "Notion 사칭 도메인",
+      "관리자 계정 로그인 유도",
+      "권한 제한 언급"
+    ],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 99,
+    "sender": "notify@notion.so",
+    "subject": "Page updated: CTF 운영 체크리스트 - 일정 변경",
+    "body": "CTF 운영 체크리스트 페이지가 업데이트되었습니다. 변경 내용은 문제 검수 일정과 참가자 안내 문구입니다. 변경된 항목은 페이지 기록에서 확인할 수 있습니다. 발송 기준 시각은 2026-07-22 10:37입니다.",
+    "date": "2026-07-22 10:37",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [],
+    "read": false,
+    "deleted": false
+  },
+  {
+    "id": 100,
+    "sender": "no-reply@accounts.google.com",
+    "subject": "보안 알림 - 일정 변경",
+    "body": "Google 계정 ethan.cho@example.com에서 새 로그인이 감지되었습니다. 기기: macOS, 위치: 대한민국. 본인이 아니라면 Google 계정 보안 페이지를 직접 열어 최근 활동을 확인하세요. 알림 세부 정보는 Google 계정의 보안 활동 메뉴에 남아 있습니다. 발송 기준 시각은 2026-07-22 11:48입니다.",
+    "date": "2026-07-22 11:48",
+    "attachment": "",
+    "is_malicious": false,
+    "indicators": [
+      "공식 발신 도메인",
+      "직접 접속 안내",
+      "비밀번호 입력 요구 없음"
+    ],
+    "read": false,
+    "deleted": false
+  }
+]

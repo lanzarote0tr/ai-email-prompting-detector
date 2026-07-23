@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 악성 이메일 필터 만들기</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>악성 이메일 필터 평가</h1>
+      <p class="subtitle">메일을 검토하고 탐지 프롬프트를 작성하세요.</p>
+    </div>
+    <div class="summary-card">
+      <span>메일</span>
+      <strong id="totalCount">-</strong>
+      <small>정답 비공개</small>
+    </div>
+  </header>
+
+  <main class="layout app-grid">
+    <section class="panel inbox-panel">
+      <div class="panel-head">
+        <div>
+          <h2>메일함</h2>
+          <p>발신자, 제목, 본문을 확인합니다.</p>
+        </div>
+        <input id="searchInput" placeholder="검색" />
+      </div>
+      <div id="emailList" class="email-list"></div>
+    </section>
+
+    <section class="panel prompt-panel">
+      <h2>필터</h2>
+      <input id="username" placeholder="이름" maxlength="30" />
+      <label for="systemPromptBox">시스템 프롬프트</label>
+      <textarea id="systemPromptBox" rows="7" placeholder="AI의 역할과 출력 형식을 지정하세요.">You are an email security filter inside a CTF-style education website.
+The user will provide a detection rule/prompt.
+You must decide which emails should be deleted as malicious.
+Return ONLY strict JSON: {"delete_ids": [1, 2, 3]}.
+Do not include thinking, reasoning, explanations, markdown, comments, or extra keys.</textarea>
+      <label for="promptBox">탐지 프롬프트</label>
+      <textarea id="promptBox" rows="10" placeholder="예: 외부 링크로 로그인, 결제 정보, 비밀번호, 2FA 코드를 요구하면 삭제한다."></textarea>
+      <button id="runBtn">실행</button>
+      <div id="progressBox" class="progress-box hidden">
+        <h3>진행</h3>
+        <div id="progressList"></div>
+      </div>
+
+      <div id="resultBox" class="result-box hidden">
+        <h3>결과</h3>
+        <div class="metrics">
+          <div><span>Score</span><strong id="score">-</strong></div>
+          <div><span>TP</span><strong id="tp">-</strong></div>
+          <div><span>FP</span><strong id="fp">-</strong></div>
+          <div><span>FN</span><strong id="fn">-</strong></div>
+        </div>
+        <p id="engine" class="engine"></p>
+      </div>
+    </section>
+
+    <section class="panel review-panel">
+    <div class="panel-head">
+      <div>
+        <h2>오답 분석</h2>
+        <p>삭제된 메일과 놓친 악성 메일만 표시합니다.</p>
+      </div>
+    </div>
+    <div id="revealList" class="reveal-list muted">아직 실행 결과가 없습니다.</div>
+  </section>
+
+    <section class="panel rank-panel">
+    <div class="panel-head">
+      <div>
+        <h2>순위</h2>
+        <p>점수순 정렬</p>
+      </div>
+      <button id="refreshBtn" class="secondary">새로고침</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>이름</th><th>점수</th><th>TP</th><th>FP</th><th>FN</th><th>삭제</th><th>시간</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboardBody"></tbody>
+    </table>
+  </section>
+  </main>
+
+  <dialog id="emailDialog">
+    <article>
+      <button id="closeDialog" class="x">×</button>
+      <p id="dialogDate" class="date"></p>
+      <h2 id="dialogSubject"></h2>
+      <p><b>발신자:</b> <span id="dialogSender"></span></p>
+      <p><b>첨부:</b> <span id="dialogAttachment"></span></p>
+      <hr />
+      <p id="dialogBody" class="mail-body"></p>
+    </article>
+  </dialog>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
