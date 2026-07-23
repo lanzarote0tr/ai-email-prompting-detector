@@ -89,8 +89,9 @@ export OLLAMA_API="http://127.0.0.1:11434/api"
 export OLLAMA_MODEL="qwen3:4b"
 export OLLAMA_READ_TIMEOUT_SECONDS="600"
 export OLLAMA_NUM_CTX="8192"
-export OLLAMA_NUM_PREDICT="128"
+export OLLAMA_NUM_PREDICT="256"
 export OLLAMA_BATCH_SIZE="10"
+export OLLAMA_RETRY_COUNT="2"
 python app.py
 ```
 
@@ -107,12 +108,13 @@ $env:OLLAMA_API="http://127.0.0.1:11434/api"
 $env:OLLAMA_MODEL="qwen3:4b"
 $env:OLLAMA_READ_TIMEOUT_SECONDS="600"
 $env:OLLAMA_NUM_CTX="8192"
-$env:OLLAMA_NUM_PREDICT="128"
+$env:OLLAMA_NUM_PREDICT="256"
 $env:OLLAMA_BATCH_SIZE="10"
+$env:OLLAMA_RETRY_COUNT="2"
 python app.py
 ```
 
-첫 실행은 모델 다운로드와 로딩 때문에 오래 걸릴 수 있습니다. 기본 read timeout은 `600`초입니다. Ollama 입력 프롬프트가 잘리지 않도록 이메일은 기본 10개씩 나누어 분석합니다.
+첫 실행은 모델 다운로드와 로딩 때문에 오래 걸릴 수 있습니다. 기본 read timeout은 `600`초입니다. Ollama 입력 프롬프트가 잘리지 않도록 이메일은 기본 10개씩 나누어 분석하고, 빈 응답이나 깨진 JSON은 배치별로 재시도합니다.
 
 ## 점수 방식
 
