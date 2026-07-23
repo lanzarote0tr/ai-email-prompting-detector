@@ -1,14 +1,15 @@
-"""Regression tests for the model-output parser.
+"""Regression tests for the AI pipeline: output parsing, batch retry, host dispatch.
 
 No test runner needed:
 
-    python -m tests.test_parsing
+    python -m tests.test_ai_pipeline
 """
 
 import sys
+import time
 
 from server.errors import AiFilterError
-from server.ollama_client import parse_delete_ids
+from server.parsing import parse_delete_ids
 
 BATCH = [{"id": i} for i in range(1, 6)]
 
@@ -64,6 +65,8 @@ def main() -> int:
 
     results.append(check("split retry recovers", *split_retry_case()))
     results.append(check("connection error is not retried", *no_retry_case()))
+    results.append(check("batches spread over hosts", *multi_host_case()))
+    results.append(check("dead host fails over", *failover_case()))
 
     failed = results.count(False)
     print(f"\n{len(results) - failed}/{len(results)} passed")
@@ -77,7 +80,7 @@ def split_retry_case():
     original = oc.request_batch
     emails = [{"id": i} for i in range(1, 9)]
     try:
-        oc.request_batch = lambda s, u, batch, stream: (
+        oc.request_batch = lambda s, u, batch, stream, endpoint=None: (
             ("garbage", "") if len(batch) > 2 else ('{"delete_ids": [%d]}' % batch[0]["id"], "")
         )
         return oc.analyze_batch("s", "u", emails, "1/1", False, splits_left=2), [1, 3, 5, 7]
@@ -104,6 +107,59 @@ def no_retry_case():
         return f"{len(calls)} attempt", "1 attempt"
     finally:
         oc.request_batch = original
+
+
+def fake_emails(n: int) -> list[dict]:
+    return [{"id": i, "sender": "s", "subject": "x", "attachment": "", "body": "b"} for i in range(1, n + 1)]
+
+
+def multi_host_case():
+    """Every batch runs somewhere, and the work is shared rather than piled on one host."""
+    import threading
+
+    import server.ollama_client as oc
+
+    original, hosts = oc.request_batch, oc.ollama_endpoints
+    seen: dict[str, int] = {}
+    lock = threading.Lock()
+
+    def fake(s, u, batch, stream, endpoint=None):
+        with lock:
+            seen[endpoint] = seen.get(endpoint, 0) + 1
+        # A real call takes seconds; without a pause the first worker drains the
+        # queue before the others have even started and nothing looks distributed.
+        time.sleep(0.05)
+        return '{"delete_ids": [%d]}' % batch[0]["id"], ""
+
+    try:
+        oc.ollama_endpoints = lambda: ["http://a/generate", "http://b/generate", "http://c/generate"]
+        oc.request_batch = fake
+        ids, _ = oc.run_batches("s", "u", fake_emails(125), stream=False)
+        # 5 batches of 25, every id accounted for, and more than one host used.
+        spread = len(seen) > 1 and sum(seen.values()) == 5
+        return (sorted(ids), spread), ([1, 26, 51, 76, 101], True)
+    finally:
+        oc.request_batch, oc.ollama_endpoints = original, hosts
+
+
+def failover_case():
+    """A host that is down must not lose its batches — a live host picks them up."""
+    import server.ollama_client as oc
+
+    original, hosts = oc.request_batch, oc.ollama_endpoints
+
+    def flaky(s, u, batch, stream, endpoint=None):
+        if "dead" in endpoint:
+            raise AiFilterError("Could not reach Ollama", retryable=False)
+        return '{"delete_ids": [%d]}' % batch[0]["id"], ""
+
+    try:
+        oc.ollama_endpoints = lambda: ["http://dead/generate", "http://live/generate"]
+        oc.request_batch = flaky
+        ids, _ = oc.run_batches("s", "u", fake_emails(125), stream=False)
+        return sorted(ids), [1, 26, 51, 76, 101]
+    finally:
+        oc.request_batch, oc.ollama_endpoints = original, hosts
 
 
 if __name__ == "__main__":

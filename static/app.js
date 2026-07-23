@@ -33,11 +33,44 @@ function renderEmails() {
       <div class="attachment">${e.attachment ? '첨부' : ''}</div>
     </div>
   `).join('');
+  updateReadCount();
+}
+
+// Reviewing 100 emails is the actual exercise, so the inbox has to remember which
+// ones you have already opened — otherwise you lose your place after the first dozen.
+const READ_KEY = 'aied.read';
+
+function loadRead() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(READ_KEY) || '[]'));
+  } catch {
+    return new Set();
+  }
+}
+
+let readIds = loadRead();
+
+function markRead(id) {
+  if (readIds.has(id)) return;
+  readIds.add(id);
+  try {
+    localStorage.setItem(READ_KEY, JSON.stringify([...readIds]));
+  } catch { /* private mode: reading still works, it just will not persist */ }
+  updateReadCount();
+}
+
+function updateReadCount() {
+  const seen = emails.filter(e => readIds.has(e.id)).length;
+  $('readCount').textContent = `${seen}/${emails.length} 확인`;
+  document.querySelectorAll('.email-item').forEach(item => {
+    item.classList.toggle('read', readIds.has(Number(item.dataset.id)));
+  });
 }
 
 function openEmail(id) {
   const e = emails.find(x => x.id === id);
   if (!e) return;
+  markRead(id);
   $('dialogDate').textContent = `#${e.id} · ${e.date}`;
   $('dialogSubject').textContent = e.subject;
   $('dialogSender').textContent = e.sender;
@@ -126,6 +159,7 @@ async function runFilter() {
 function formatStage(stage) {
   const labels = {
     queued: '대기',
+    waiting_turn: '순번',
     connecting: '연결',
     waiting: '대기',
     generating: '분석',
@@ -139,6 +173,7 @@ function formatStage(stage) {
 function formatProgressMessage(data) {
   const { stage, index, total } = data;
   if (stage === 'queued') return '요청 접수';
+  if (stage === 'waiting_turn') return `다른 실행이 진행 중 · 대기 ${data.position}번째`;
   if (stage === 'connecting') return 'Ollama 연결 중';
   if (stage === 'waiting') return `모델 응답 대기 중 (${total ?? '?'}개 묶음)`;
   if (stage === 'generating') return `메일 분석 중 ${index}/${total}`;
