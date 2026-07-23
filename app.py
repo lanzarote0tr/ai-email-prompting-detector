@@ -11,7 +11,7 @@ from flask_sock import Sock
 
 OLLAMA_API = os.getenv("OLLAMA_API", "http://127.0.0.1:11434/api")
 OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:0.6b")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:4b")
 try:
     OLLAMA_CONNECT_TIMEOUT_SECONDS = int(os.getenv("OLLAMA_CONNECT_TIMEOUT_SECONDS", "10"))
 except ValueError:
@@ -21,12 +21,22 @@ try:
 except ValueError:
     OLLAMA_READ_TIMEOUT_SECONDS = 600
 try:
-    OLLAMA_NUM_PREDICT = int(os.getenv("OLLAMA_NUM_PREDICT", "512"))
+    OLLAMA_NUM_PREDICT = int(os.getenv("OLLAMA_NUM_PREDICT", "128"))
 except ValueError:
-    OLLAMA_NUM_PREDICT = 512
+    OLLAMA_NUM_PREDICT = 128
+try:
+    OLLAMA_NUM_CTX = int(os.getenv("OLLAMA_NUM_CTX", "8192"))
+except ValueError:
+    OLLAMA_NUM_CTX = 8192
+try:
+    OLLAMA_BATCH_SIZE = int(os.getenv("OLLAMA_BATCH_SIZE", "10"))
+except ValueError:
+    OLLAMA_BATCH_SIZE = 10
 OLLAMA_CONNECT_TIMEOUT_SECONDS = max(1, OLLAMA_CONNECT_TIMEOUT_SECONDS)
 OLLAMA_READ_TIMEOUT_SECONDS = max(1, OLLAMA_READ_TIMEOUT_SECONDS)
 OLLAMA_NUM_PREDICT = max(1, OLLAMA_NUM_PREDICT)
+OLLAMA_NUM_CTX = max(2048, OLLAMA_NUM_CTX)
+OLLAMA_BATCH_SIZE = max(1, OLLAMA_BATCH_SIZE)
 OLLAMA_TIMEOUT = (OLLAMA_CONNECT_TIMEOUT_SECONDS, OLLAMA_READ_TIMEOUT_SECONDS)
 OLLAMA_OUTPUT_SCHEMA = {
     "type": "object",
@@ -153,14 +163,32 @@ def load_emails() -> list[dict[str, Any]]:
 EMAILS = load_emails()
 
 
-def compact_email_for_ai(email: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "id": email["id"],
-        "sender": email["sender"],
-        "subject": email["subject"],
-        "body": email["body"],
-        "attachment": email["attachment"],
-    }
+def compact_text_for_ai(value: Any) -> str:
+    return " ".join(str(value or "").split())
+
+
+def format_emails_for_ai(emails: list[dict[str, Any]]) -> str:
+    lines = [
+        "Emails, one per line:",
+        "id | sender | subject | attachment | body",
+    ]
+    for email in emails:
+        lines.append(
+            " | ".join(
+                [
+                    str(email["id"]),
+                    compact_text_for_ai(email["sender"]),
+                    compact_text_for_ai(email["subject"]),
+                    compact_text_for_ai(email["attachment"]),
+                    compact_text_for_ai(email["body"]),
+                ]
+            )
+        )
+    return "\n".join(lines)
+
+
+def email_batches(emails: list[dict[str, Any]]) -> list[list[dict[str, Any]]]:
+    return [emails[i:i + OLLAMA_BATCH_SIZE] for i in range(0, len(emails), OLLAMA_BATCH_SIZE)]
 
 
 def ollama_endpoint() -> str:
@@ -188,13 +216,14 @@ def build_ollama_payload(system_prompt: str, user_prompt: str, emails: list[dict
         "options": {
             "temperature": 0,
             "num_predict": OLLAMA_NUM_PREDICT,
+            "num_ctx": OLLAMA_NUM_CTX,
         },
         "prompt": (
             "/no_think\n\n"
             "User detection prompt:\n"
             + user_prompt
-            + "\n\nEmails JSON:\n"
-            + json.dumps([compact_email_for_ai(e) for e in emails], ensure_ascii=False)
+            + "\n\n"
+            + format_emails_for_ai(emails)
             + '\n\nReturn only this JSON object shape: {"delete_ids":[1,2,3]}.'
         ),
     }
@@ -303,36 +332,39 @@ def parse_ai_delete_ids(content: str, emails: list[dict[str, Any]]) -> list[int]
 
 def call_ollama(system_prompt: str, user_prompt: str, emails: list[dict[str, Any]]) -> tuple[list[int], str]:
     endpoint = ollama_endpoint()
+    delete_ids = []
 
-    try:
-        resp = requests.post(
-            endpoint,
-            headers=ollama_headers(),
-            json=build_ollama_payload(system_prompt, user_prompt, emails, stream=False),
-            timeout=OLLAMA_TIMEOUT,
-        )
-        resp.raise_for_status()
-        data = resp.json()
-        if not isinstance(data, dict):
-            raise ValueError("top-level response must be a JSON object")
-    except requests.Timeout as e:
-        raise AiFilterError(
-            f"AI request timed out. Connect timeout: {OLLAMA_CONNECT_TIMEOUT_SECONDS}s, "
-            f"read timeout: {OLLAMA_READ_TIMEOUT_SECONDS}s.",
-            504,
-        ) from e
-    except requests.HTTPError as e:
-        status = e.response.status_code if e.response is not None else "unknown"
-        raise AiFilterError(f"Ollama returned HTTP {status}. Check OLLAMA_API and OLLAMA_MODEL.") from e
-    except requests.RequestException as e:
-        raise AiFilterError(
-            f"Could not reach local Ollama at {endpoint}. Start Ollama and pull the configured model ({OLLAMA_MODEL})."
-        ) from e
-    except ValueError as e:
-        raise AiFilterError(f"AI API returned invalid JSON response: {e}") from e
+    for batch in email_batches(emails):
+        try:
+            resp = requests.post(
+                endpoint,
+                headers=ollama_headers(),
+                json=build_ollama_payload(system_prompt, user_prompt, batch, stream=False),
+                timeout=OLLAMA_TIMEOUT,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            if not isinstance(data, dict):
+                raise ValueError("top-level response must be a JSON object")
+        except requests.Timeout as e:
+            raise AiFilterError(
+                f"AI request timed out. Connect timeout: {OLLAMA_CONNECT_TIMEOUT_SECONDS}s, "
+                f"read timeout: {OLLAMA_READ_TIMEOUT_SECONDS}s.",
+                504,
+            ) from e
+        except requests.HTTPError as e:
+            status = e.response.status_code if e.response is not None else "unknown"
+            raise AiFilterError(f"Ollama returned HTTP {status}. Check OLLAMA_API and OLLAMA_MODEL.") from e
+        except requests.RequestException as e:
+            raise AiFilterError(
+                f"Could not reach local Ollama at {endpoint}. Start Ollama and pull the configured model ({OLLAMA_MODEL})."
+            ) from e
+        except ValueError as e:
+            raise AiFilterError(f"AI API returned invalid JSON response: {e}") from e
 
-    content = data.get("response") or data.get("message", {}).get("content")
-    return parse_ai_delete_ids(content, emails), "local-ollama"
+        content = data.get("response") or data.get("message", {}).get("content")
+        delete_ids.extend(parse_ai_delete_ids(content, batch))
+    return sorted(set(delete_ids)), "local-ollama"
 
 
 def call_ollama_streaming(system_prompt: str, user_prompt: str, emails: list[dict[str, Any]], progress) -> tuple[list[int], str]:
@@ -342,54 +374,62 @@ def call_ollama_streaming(system_prompt: str, user_prompt: str, emails: list[dic
         "waiting",
         f"Waiting for {OLLAMA_MODEL}. First run/model load can take several minutes; read timeout is {OLLAMA_READ_TIMEOUT_SECONDS}s.",
     )
+    batches = email_batches(emails)
+    delete_ids = []
 
-    try:
-        with requests.post(
-            endpoint,
-            headers=ollama_headers(),
-            json=build_ollama_payload(system_prompt, user_prompt, emails, stream=True),
-            timeout=OLLAMA_TIMEOUT,
-            stream=True,
-        ) as resp:
-            resp.raise_for_status()
-            progress("generating", f"Ollama is analyzing {len(emails)} emails with {OLLAMA_MODEL}")
+    for batch_number, batch in enumerate(batches, start=1):
+        try:
+            with requests.post(
+                endpoint,
+                headers=ollama_headers(),
+                json=build_ollama_payload(system_prompt, user_prompt, batch, stream=True),
+                timeout=OLLAMA_TIMEOUT,
+                stream=True,
+            ) as resp:
+                resp.raise_for_status()
+                progress(
+                    "generating",
+                    f"Ollama is analyzing email batch {batch_number}/{len(batches)} with {OLLAMA_MODEL}",
+                )
 
-            chunks = []
-            chunk_count = 0
-            for line in resp.iter_lines(decode_unicode=True):
-                if not line:
-                    continue
-                try:
-                    event = json.loads(line)
-                except json.JSONDecodeError as e:
-                    raise AiFilterError(f"Ollama stream returned invalid JSON: {e}") from e
-                if not isinstance(event, dict):
-                    raise AiFilterError("Ollama stream returned a non-object event.")
-                token = event.get("response")
-                if isinstance(token, str):
-                    chunks.append(token)
-                    chunk_count += 1
-                    progress("generating", f"Received {chunk_count} response chunks")
-                if event.get("done"):
-                    break
-    except requests.Timeout as e:
-        raise AiFilterError(
-            f"AI request timed out. Connect timeout: {OLLAMA_CONNECT_TIMEOUT_SECONDS}s, "
-            f"read timeout: {OLLAMA_READ_TIMEOUT_SECONDS}s. "
-            f"Use a smaller model, warm up Ollama once with `ollama run {OLLAMA_MODEL}`, "
-            "or increase OLLAMA_READ_TIMEOUT_SECONDS.",
-            504,
-        ) from e
-    except requests.HTTPError as e:
-        status = e.response.status_code if e.response is not None else "unknown"
-        raise AiFilterError(f"Ollama returned HTTP {status}. Check OLLAMA_API and OLLAMA_MODEL.") from e
-    except requests.RequestException as e:
-        raise AiFilterError(
-            f"Could not reach local Ollama at {endpoint}. Start Ollama and pull the configured model ({OLLAMA_MODEL})."
-        ) from e
+                chunks = []
+                chunk_count = 0
+                for line in resp.iter_lines(decode_unicode=True):
+                    if not line:
+                        continue
+                    try:
+                        event = json.loads(line)
+                    except json.JSONDecodeError as e:
+                        raise AiFilterError(f"Ollama stream returned invalid JSON: {e}") from e
+                    if not isinstance(event, dict):
+                        raise AiFilterError("Ollama stream returned a non-object event.")
+                    token = event.get("response")
+                    if isinstance(token, str):
+                        chunks.append(token)
+                        chunk_count += 1
+                        progress("generating", f"Batch {batch_number}/{len(batches)} received {chunk_count} chunks")
+                    if event.get("done"):
+                        break
+        except requests.Timeout as e:
+            raise AiFilterError(
+                f"AI request timed out. Connect timeout: {OLLAMA_CONNECT_TIMEOUT_SECONDS}s, "
+                f"read timeout: {OLLAMA_READ_TIMEOUT_SECONDS}s. "
+                f"Use a smaller model, warm up Ollama once with `ollama run {OLLAMA_MODEL}`, "
+                "or increase OLLAMA_READ_TIMEOUT_SECONDS.",
+                504,
+            ) from e
+        except requests.HTTPError as e:
+            status = e.response.status_code if e.response is not None else "unknown"
+            raise AiFilterError(f"Ollama returned HTTP {status}. Check OLLAMA_API and OLLAMA_MODEL.") from e
+        except requests.RequestException as e:
+            raise AiFilterError(
+                f"Could not reach local Ollama at {endpoint}. Start Ollama and pull the configured model ({OLLAMA_MODEL})."
+            ) from e
 
-    progress("parsing", "Parsing Ollama JSON output")
-    return parse_ai_delete_ids("".join(chunks), emails), "local-ollama"
+        progress("parsing", f"Parsing Ollama JSON output for batch {batch_number}/{len(batches)}")
+        delete_ids.extend(parse_ai_delete_ids("".join(chunks), batch))
+
+    return sorted(set(delete_ids)), "local-ollama"
 
 
 def save_score(username: str, system_prompt: str, prompt: str, result: dict[str, Any]) -> None:

@@ -3,7 +3,7 @@ set -eu
 
 : "${PORT:=5001}"
 : "${OLLAMA_API:=http://127.0.0.1:11434/api}"
-: "${OLLAMA_MODEL:=qwen3:0.6b}"
+: "${OLLAMA_MODEL:=qwen3:4b}"
 : "${WEB_CONCURRENCY:=1}"
 : "${WEB_THREADS:=8}"
 

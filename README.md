@@ -32,13 +32,13 @@ docker run --rm -p 5001:5001 -v ollama-models:/root/.ollama -v email-scores:/app
 http://127.0.0.1:5001
 ```
 
-컨테이너 시작 시 Ollama 서버를 내부에서 실행하고, 모델이 없으면 자동으로 내려받습니다. 기본 모델은 저사양 서버용 `qwen3:0.6b`입니다.
+컨테이너 시작 시 Ollama 서버를 내부에서 실행하고, 모델이 없으면 자동으로 내려받습니다. 기본 모델은 `qwen3:4b`입니다.
 
-정확도가 부족하면 다음처럼 조금 더 큰 모델을 사용할 수 있습니다.
+더 큰 서버에서는 다음처럼 모델을 바꿔 정확도를 높일 수 있습니다.
 
 ```bash
 docker run --rm -p 5001:5001 \
-  -e OLLAMA_MODEL=qwen3:1.7b \
+  -e OLLAMA_MODEL=qwen3:8b \
   -v ollama-models:/root/.ollama \
   -v email-scores:/app/data \
   ai-email-prompting-detector
@@ -50,7 +50,7 @@ docker run --rm -p 5001:5001 \
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-ollama pull qwen3:0.6b
+ollama pull qwen3:4b
 python app.py
 ```
 
@@ -79,15 +79,18 @@ PORT=8000 python app.py
 ```python
 OLLAMA_API = os.getenv("OLLAMA_API", "http://127.0.0.1:11434/api")
 OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:0.6b")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:4b")
 ```
 
 환경변수로 설정해서 실행할 수 있습니다.
 
 ```bash
 export OLLAMA_API="http://127.0.0.1:11434/api"
-export OLLAMA_MODEL="qwen3:0.6b"
+export OLLAMA_MODEL="qwen3:4b"
 export OLLAMA_READ_TIMEOUT_SECONDS="600"
+export OLLAMA_NUM_CTX="8192"
+export OLLAMA_NUM_PREDICT="128"
+export OLLAMA_BATCH_SIZE="10"
 python app.py
 ```
 
@@ -101,12 +104,15 @@ Windows PowerShell:
 
 ```powershell
 $env:OLLAMA_API="http://127.0.0.1:11434/api"
-$env:OLLAMA_MODEL="qwen3:0.6b"
+$env:OLLAMA_MODEL="qwen3:4b"
 $env:OLLAMA_READ_TIMEOUT_SECONDS="600"
+$env:OLLAMA_NUM_CTX="8192"
+$env:OLLAMA_NUM_PREDICT="128"
+$env:OLLAMA_BATCH_SIZE="10"
 python app.py
 ```
 
-첫 실행은 모델 다운로드와 로딩 때문에 오래 걸릴 수 있습니다. 기본 read timeout은 `600`초입니다.
+첫 실행은 모델 다운로드와 로딩 때문에 오래 걸릴 수 있습니다. 기본 read timeout은 `600`초입니다. Ollama 입력 프롬프트가 잘리지 않도록 이메일은 기본 10개씩 나누어 분석합니다.
 
 ## 점수 방식
 
