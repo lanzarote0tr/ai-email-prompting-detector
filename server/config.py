@@ -22,6 +22,10 @@ DB_PATH = PROJECT_ROOT / "data" / "scores.db"
 EMAILS_PATH = PROJECT_ROOT / "emails.json"
 
 OLLAMA_API = os.getenv("OLLAMA_API", "http://127.0.0.1:11434/api")
+# Comma-separated list of Ollama hosts. Batches are spread across them, so N machines
+# cut the run to roughly 1/N. Splitting across one host gains nothing (measured: the
+# GPU is already saturated) — this only pays off with real extra hardware.
+OLLAMA_APIS = [url.strip() for url in OLLAMA_API.split(",") if url.strip()]
 OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:latest")
 OLLAMA_CONNECT_TIMEOUT_SECONDS = env_int("OLLAMA_CONNECT_TIMEOUT_SECONDS", 10, 1)
@@ -41,7 +45,7 @@ AI_DEBUG_OUTPUT_CHARS = env_int("AI_DEBUG_OUTPUT_CHARS", 2000, 1)
 # Run time scales with this almost linearly: the model has to read every email,
 # and reading the prompt is ~90% of the work. 25 measured 13.1s on qwen3:latest,
 # 35 measured 18.6s, so 25 is what fits a 15s budget. 0 means the whole pool.
-ROUND_SIZE = env_int("ROUND_SIZE", 25, 0)
+ROUND_SIZE = env_int("ROUND_SIZE", 100, 0)
 ROUND_SEED = os.getenv("ROUND_SEED", "round-1")
 
 SERVER_PORT = env_int("PORT", 5001, 1)

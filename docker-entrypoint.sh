@@ -16,23 +16,31 @@ import os
 import urllib.error
 import urllib.request
 
-api = os.environ["OLLAMA_API"].rstrip("/")
 model = os.environ["OLLAMA_MODEL"]
-try:
-    with urllib.request.urlopen(f"{api}/tags", timeout=5) as resp:
-        tags = json.load(resp)
-except (urllib.error.URLError, OSError, ValueError) as e:
-    print(f"WARNING: cannot reach Ollama at {api} ({e}).")
-    print("         Start it on the host with: OLLAMA_HOST=0.0.0.0 ollama serve")
-    print("         On Linux also run the container with --add-host=host.docker.internal:host-gateway")
-else:
+apis = [a.strip().rstrip("/") for a in os.environ["OLLAMA_API"].split(",") if a.strip()]
+usable = 0
+for api in apis:
+    try:
+        with urllib.request.urlopen(f"{api}/tags", timeout=5) as resp:
+            tags = json.load(resp)
+    except (urllib.error.URLError, OSError, ValueError) as e:
+        print(f"WARNING: cannot reach Ollama at {api} ({e}).")
+        print("         Start it on that machine with: OLLAMA_HOST=0.0.0.0 ollama serve")
+        print("         On Linux also run the container with --add-host=host.docker.internal:host-gateway")
+        continue
     names = [m.get("name", "") for m in tags.get("models", [])]
     if model in names:
+        usable += 1
         print(f"Ollama OK at {api}, using model {model}")
     else:
         print(f"WARNING: Ollama at {api} has no model named {model}.")
-        print(f"         Pull it on the host with: ollama pull {model}")
+        print(f"         Pull it there with: ollama pull {model}")
         print(f"         Available: {', '.join(names) or 'none'}")
+
+if len(apis) > 1:
+    print(f"{usable}/{len(apis)} hosts ready; batches are spread across them.")
+if not usable:
+    print("WARNING: no usable Ollama host. Browsing works, but running the filter will fail.")
 PY
 
 exec gunicorn \

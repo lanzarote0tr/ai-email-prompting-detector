@@ -1,6 +1,8 @@
 import json
 import logging
+import queue
 import re
+import threading
 from typing import Any
 
 import requests
@@ -10,6 +12,7 @@ from .config import (
     AI_DEBUG_OUTPUT_CHARS,
     OLLAMA_API,
     OLLAMA_API_KEY,
+    OLLAMA_APIS,
     OLLAMA_BATCH_RETRIES,
     OLLAMA_BATCH_SIZE,
     OLLAMA_CONNECT_TIMEOUT_SECONDS,
@@ -50,11 +53,19 @@ def format_emails(emails: list[dict[str, Any]]) -> str:
     return "\n".join(lines)
 
 
-def ollama_endpoint() -> str:
-    endpoint = OLLAMA_API.rstrip("/")
+def normalize_endpoint(api: str) -> str:
+    endpoint = api.rstrip("/")
     if not endpoint.endswith("/generate"):
         endpoint += "/generate"
     return endpoint
+
+
+def ollama_endpoints() -> list[str]:
+    return [normalize_endpoint(api) for api in OLLAMA_APIS] or [normalize_endpoint(OLLAMA_API)]
+
+
+def ollama_endpoint() -> str:
+    return ollama_endpoints()[0]
 
 
 def ollama_headers() -> dict[str, str]:
@@ -310,9 +321,10 @@ def request_batch(
     user_prompt: str,
     batch: list[dict[str, Any]],
     stream: bool,
+    endpoint: str | None = None,
 ) -> tuple[str, str]:
     """Send one batch to Ollama and return its (response, thinking) text."""
-    endpoint = ollama_endpoint()
+    endpoint = endpoint or ollama_endpoint()
     payload = build_payload(system_prompt, user_prompt, batch, stream=stream)
     debug_log(
         "AI request ids=%s prompt_chars=%d stream=%s",
@@ -382,6 +394,7 @@ def analyze_batch(
     label: str,
     stream: bool,
     splits_left: int = OLLAMA_BATCH_RETRIES,
+    endpoint: str | None = None,
 ) -> list[int]:
     """Classify one batch, splitting it in half and retrying if the model's answer is unusable.
 
@@ -389,7 +402,7 @@ def analyze_batch(
     so a retry halves the batch instead, which is also the fix for a truncated answer.
     """
     try:
-        response_text, thinking_text = request_batch(system_prompt, user_prompt, batch, stream)
+        response_text, thinking_text = request_batch(system_prompt, user_prompt, batch, stream, endpoint)
         debug_log("AI batch %s raw output: %s", label, preview_text(response_text))
         if thinking_text.strip():
             debug_log("AI batch %s raw thinking: %s", label, preview_text(thinking_text))
@@ -406,8 +419,8 @@ def analyze_batch(
         mid = len(batch) // 2
         logger.warning("AI batch %s failed (%s); retrying as two smaller batches", label, e)
         return (
-            analyze_batch(system_prompt, user_prompt, batch[:mid], f"{label}a", stream, splits_left - 1)
-            + analyze_batch(system_prompt, user_prompt, batch[mid:], f"{label}b", stream, splits_left - 1)
+            analyze_batch(system_prompt, user_prompt, batch[:mid], f"{label}a", stream, splits_left - 1, endpoint)
+            + analyze_batch(system_prompt, user_prompt, batch[mid:], f"{label}b", stream, splits_left - 1, endpoint)
         )
 
 
@@ -444,34 +457,81 @@ def run_batches(
                 OLLAMA_NUM_CTX,
             )
 
+    endpoints = ollama_endpoints()
     if progress:
-        progress("connecting", f"Connecting to local Ollama at {ollama_endpoint()}", total=total)
+        where = endpoints[0] if len(endpoints) == 1 else f"{len(endpoints)} Ollama hosts"
+        progress("connecting", f"Connecting to {where}", total=total)
         progress(
             "waiting",
             f"Waiting for {OLLAMA_MODEL}; read timeout is {OLLAMA_READ_TIMEOUT_SECONDS}s.",
             total=total,
         )
 
+    pending = queue.Queue()
     for batch_number, batch in enumerate(batches, start=1):
+        pending.put((batch_number, batch))
+
+    delete_ids: list[int] = []
+    errors: list[AiFilterError] = []
+    state = threading.Lock()
+    done = 0
+
+    def report(stage: str, message: str, **extra: Any) -> None:
+        if progress:
+            with state:
+                progress(stage, message, **extra)
+
+    def run_one(batch_number: int, batch: list[dict[str, Any]], home: str) -> list[int]:
+        """Run a batch on `home`, falling back to the other hosts if that machine is down."""
         label = f"{batch_number}/{total}"
-        if progress:
-            progress(
-                "generating",
-                f"Ollama is analyzing batch {label} with {OLLAMA_MODEL}",
-                index=batch_number,
-                total=total,
-            )
-        delete_ids.extend(analyze_batch(system_prompt, user_prompt, batch, label, stream))
-        if progress:
-            progress(
-                "parsed",
-                f"Finished batch {label}",
-                index=batch_number,
-                total=total,
-                deleted=len(set(delete_ids)),
-            )
+        candidates = [home] + [e for e in endpoints if e != home]
+        for attempt, endpoint in enumerate(candidates):
+            report("generating", f"Analyzing batch {label} on {endpoint}", index=batch_number, total=total)
+            try:
+                return analyze_batch(system_prompt, user_prompt, batch, label, stream, endpoint=endpoint)
+            except AiFilterError as e:
+                # Unreachable host: another machine can still do this work. A bad *answer*
+                # (retryable) is the model's fault and would repeat everywhere, so it stands.
+                if e.retryable or attempt == len(candidates) - 1:
+                    raise
+                logger.warning("Host %s failed batch %s (%s); trying another host", endpoint, label, e)
+        raise AssertionError("unreachable")
+
+    def worker(home: str) -> None:
+        nonlocal done
+        while not errors:
+            try:
+                batch_number, batch = pending.get_nowait()
+            except queue.Empty:
+                return
+            try:
+                found = run_one(batch_number, batch, home)
+            except AiFilterError as e:
+                errors.append(e)
+                return
+            with state:
+                delete_ids.extend(found)
+                done += 1
+                finished, deleted_now = done, len(set(delete_ids))
+            report("parsed", f"Finished batch {label_of(finished, total)}", index=finished, total=total, deleted=deleted_now)
+
+    if len(endpoints) == 1:
+        worker(endpoints[0])
+    else:
+        threads = [threading.Thread(target=worker, args=(e,), daemon=True) for e in endpoints]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+
+    if errors:
+        raise errors[0]
 
     return sorted(set(delete_ids)), "local-ollama"
+
+
+def label_of(index: int, total: int) -> str:
+    return f"{index}/{total}"
 
 
 def call_ollama(system_prompt: str, user_prompt: str, emails: list[dict[str, Any]]) -> tuple[list[int], str]:

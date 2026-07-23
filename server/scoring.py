@@ -1,17 +1,22 @@
 from typing import Any
 
-# A missed malicious email costs more than a deleted normal one.
-# These were tuned for a 100-email round; they scale with the round so that
-# "delete nothing" and "delete everything" both stay pinned at 0 whatever
-# ROUND_SIZE is. At 100 emails that gives the original 45/70, at 500 it gives 9/14.
-FP_PENALTY_AT_100 = 45
-FN_PENALTY_AT_100 = 70
-REFERENCE_ROUND = 100
+PERFECT_SCORE = 1000
 
 
-def penalties(total: int) -> tuple[float, float]:
-    scale = REFERENCE_ROUND / max(1, total)
-    return FP_PENALTY_AT_100 * scale, FN_PENALTY_AT_100 * scale
+def penalties(malicious: int, benign: int) -> tuple[float, float]:
+    """Cost of one FP and one FN, derived from the round itself.
+
+    Missing every malicious email scores 0, and deleting every normal email scores 0.
+    That fixes both penalties: one FN costs 1/malicious of the total, one FP costs
+    1/benign. No hand-tuned constants, so changing ROUND_SIZE or the malicious ratio
+    needs no recalibration.
+
+    Because malicious mail is the minority (21% here), an FN lands ~4x harder than an
+    FP on its own — the "missing an attack is worse" intent, without a magic number.
+    """
+    fp_penalty = PERFECT_SCORE / benign if benign else 0
+    fn_penalty = PERFECT_SCORE / malicious if malicious else 0
+    return fp_penalty, fn_penalty
 
 
 def build_reveal(result: dict[str, Any], emails: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -52,8 +57,8 @@ def score_result(delete_ids: list[int], emails: list[dict[str, Any]]) -> dict[st
             result = "TN"
         details.append({"id": email["id"], "result": result, "deleted": deleted, "is_malicious": malicious})
 
-    fp_penalty, fn_penalty = penalties(len(emails))
-    score = max(0, round(1000 + tp * 5 + tn - fp * fp_penalty - fn * fn_penalty))
+    fp_penalty, fn_penalty = penalties(tp + fn, tn + fp)
+    score = max(0, round(PERFECT_SCORE - fp * fp_penalty - fn * fn_penalty))
     precision = tp / (tp + fp) if tp + fp else 0
     recall = tp / (tp + fn) if tp + fn else 0
     return {
