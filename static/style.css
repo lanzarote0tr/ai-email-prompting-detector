@@ -222,6 +222,20 @@ button.secondary:hover { background: var(--surface-alt); }
   margin-bottom: 10px;
 }
 
+.progress-bar {
+  height: 6px;
+  margin-bottom: 10px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+#progressFill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 240ms ease;
+}
+
 #progressList {
   max-height: 150px;
   overflow: auto;

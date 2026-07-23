@@ -1,7 +1,8 @@
 import json
+import random
 from typing import Any
 
-from .config import EMAILS_PATH
+from .config import EMAILS_PATH, ROUND_SEED, ROUND_SIZE
 
 
 def load_emails() -> list[dict[str, Any]]:
@@ -56,4 +57,28 @@ def load_emails() -> list[dict[str, Any]]:
         item["deleted"] = item.get("deleted", False)
         normalized.append(item)
 
-    return sorted(normalized, key=lambda e: e["id"])
+    return build_round(sorted(normalized, key=lambda e: e["id"]))
+
+
+def build_round(emails: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Pick the emails a single attempt is graded on.
+
+    Run time is dominated by how many emails the model has to read, so the whole
+    dataset is a pool and each round draws a fixed-size sample from it. The sample
+    is seeded, so every player hitting this server sees and is scored on the same
+    emails; change ROUND_SEED (or restart) to deal a new round.
+
+    The malicious ratio of the pool is preserved, otherwise a round could come out
+    with almost no malicious mail and the score would mean nothing.
+    """
+    if ROUND_SIZE <= 0 or ROUND_SIZE >= len(emails):
+        return emails
+
+    malicious = [e for e in emails if e["is_malicious"]]
+    benign = [e for e in emails if not e["is_malicious"]]
+    want_malicious = round(ROUND_SIZE * len(malicious) / len(emails))
+    want_malicious = max(1, min(want_malicious, len(malicious), ROUND_SIZE - 1))
+
+    rng = random.Random(ROUND_SEED)
+    picked = rng.sample(malicious, want_malicious) + rng.sample(benign, ROUND_SIZE - want_malicious)
+    return sorted(picked, key=lambda e: e["id"])

@@ -33,10 +33,6 @@ function renderEmails() {
       <div class="attachment">${e.attachment ? '첨부' : ''}</div>
     </div>
   `).join('');
-
-  document.querySelectorAll('.email-item').forEach(item => {
-    item.addEventListener('click', () => openEmail(Number(item.dataset.id)));
-  });
 }
 
 function openEmail(id) {
@@ -86,7 +82,11 @@ async function runFilter() {
   ws.addEventListener('message', async (event) => {
     const data = JSON.parse(event.data);
     if (data.type === 'progress') {
-      addProgress(formatStage(data.stage), formatProgressMessage(data.stage, data.message));
+      const perBatch = data.stage === 'generating' || data.stage === 'parsed';
+      addProgress(formatStage(data.stage), formatProgressMessage(data), perBatch);
+      if (perBatch) {
+        setProgressBar(data.stage === 'parsed' ? data.index : data.index - 1, data.total);
+      }
       return;
     }
     if (data.type === 'final') {
@@ -119,7 +119,7 @@ async function runFilter() {
       addProgress('오류', '분석이 끝나기 전에 연결이 닫힘');
     }
     $('runBtn').disabled = false;
-    $('runBtn').textContent = 'AI 필터 실행';
+    $('runBtn').textContent = '실행';
   });
 }
 
@@ -129,34 +129,56 @@ function formatStage(stage) {
     connecting: '연결',
     waiting: '대기',
     generating: '분석',
-    parsing: '정리',
+    parsed: '분석',
     scoring: '채점',
     saved: '저장',
   };
   return labels[stage] || stage;
 }
 
-function formatProgressMessage(stage, message) {
+function formatProgressMessage(data) {
+  const { stage, index, total } = data;
   if (stage === 'queued') return '요청 접수';
   if (stage === 'connecting') return 'Ollama 연결 중';
-  if (stage === 'waiting') return '모델 응답 대기 중';
-  if (stage === 'generating') {
-    const match = String(message).match(/Received (\d+) response chunks/);
-    return match ? `응답 수신 ${match[1]}` : '메일 분석 중';
-  }
-  if (stage === 'parsing') return '응답 정리';
+  if (stage === 'waiting') return `모델 응답 대기 중 (${total ?? '?'}개 묶음)`;
+  if (stage === 'generating') return `메일 분석 중 ${index}/${total}`;
+  if (stage === 'parsed') return `${index}/${total} 완료 · 삭제 ${data.deleted}`;
   if (stage === 'scoring') return '점수 계산';
   if (stage === 'saved') return '리더보드 저장';
-  return message;
+  return data.message;
 }
 
 function resetProgress() {
   $('progressBox').classList.remove('hidden');
   $('progressList').innerHTML = '';
+  setProgressBar(0, 0);
 }
 
-function addProgress(stage, message) {
+function setProgressBar(index, total) {
+  const bar = $('progressBar');
+  const fill = $('progressFill');
+  if (!total) {
+    bar.classList.add('hidden');
+    return;
+  }
+  bar.classList.remove('hidden');
+  fill.style.width = `${Math.round((index / total) * 100)}%`;
+}
+
+// Per-batch updates rewrite one row instead of appending 20+ near-identical lines.
+function addProgress(stage, message, live = false) {
   const list = $('progressList');
+  if (live) {
+    let item = list.querySelector('.progress-item.live');
+    if (!item) {
+      item = document.createElement('div');
+      item.className = 'progress-item live';
+      list.appendChild(item);
+    }
+    item.innerHTML = `<b>${escapeHtml(stage)}</b><span>${escapeHtml(message)}</span>`;
+    list.scrollTop = list.scrollHeight;
+    return;
+  }
   const item = document.createElement('div');
   item.className = `progress-item ${stage === '오류' ? 'error' : ''}`;
   item.innerHTML = `<b>${escapeHtml(stage)}</b><span>${escapeHtml(message)}</span>`;
@@ -205,6 +227,12 @@ async function fetchLeaderboard() {
     </tr>
   `).join('') || '<tr><td colspan="8" class="muted">아직 기록이 없습니다.</td></tr>';
 }
+
+// One delegated listener, so re-rendering the list on every keystroke stays cheap.
+$('emailList').addEventListener('click', (event) => {
+  const item = event.target.closest('.email-item');
+  if (item) openEmail(Number(item.dataset.id));
+});
 
 $('searchInput').addEventListener('input', applySearch);
 $('runBtn').addEventListener('click', runFilter);

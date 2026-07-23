@@ -1,5 +1,18 @@
 from typing import Any
 
+# A missed malicious email costs more than a deleted normal one.
+# These were tuned for a 100-email round; they scale with the round so that
+# "delete nothing" and "delete everything" both stay pinned at 0 whatever
+# ROUND_SIZE is. At 100 emails that gives the original 45/70, at 500 it gives 9/14.
+FP_PENALTY_AT_100 = 45
+FN_PENALTY_AT_100 = 70
+REFERENCE_ROUND = 100
+
+
+def penalties(total: int) -> tuple[float, float]:
+    scale = REFERENCE_ROUND / max(1, total)
+    return FP_PENALTY_AT_100 * scale, FN_PENALTY_AT_100 * scale
+
 
 def build_reveal(result: dict[str, Any], emails: list[dict[str, Any]]) -> list[dict[str, Any]]:
     reveal = []
@@ -39,7 +52,8 @@ def score_result(delete_ids: list[int], emails: list[dict[str, Any]]) -> dict[st
             result = "TN"
         details.append({"id": email["id"], "result": result, "deleted": deleted, "is_malicious": malicious})
 
-    score = max(0, 1000 + tp * 5 + tn - fp * 45 - fn * 70)
+    fp_penalty, fn_penalty = penalties(len(emails))
+    score = max(0, round(1000 + tp * 5 + tn - fp * fp_penalty - fn * fn_penalty))
     precision = tp / (tp + fp) if tp + fp else 0
     recall = tp / (tp + fn) if tp + fn else 0
     return {

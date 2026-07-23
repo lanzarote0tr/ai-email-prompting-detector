@@ -35,16 +35,13 @@
       <h2>필터</h2>
       <input id="username" placeholder="이름" maxlength="30" />
       <label for="systemPromptBox">시스템 프롬프트</label>
-      <textarea id="systemPromptBox" rows="7" placeholder="AI의 역할과 출력 형식을 지정하세요.">You are an email security filter inside a CTF-style education website.
-The user will provide a detection rule/prompt.
-You must decide which emails should be deleted as malicious.
-Return ONLY strict JSON: {"delete_ids": [1, 2, 3]}.
-Do not include thinking, reasoning, explanations, markdown, comments, or extra keys.</textarea>
+      <textarea id="systemPromptBox" rows="7" placeholder="AI의 역할과 출력 형식을 지정하세요.">{{ default_system_prompt }}</textarea>
       <label for="promptBox">탐지 프롬프트</label>
       <textarea id="promptBox" rows="10" placeholder="예: 외부 링크로 로그인, 결제 정보, 비밀번호, 2FA 코드를 요구하면 삭제한다."></textarea>
       <button id="runBtn">실행</button>
       <div id="progressBox" class="progress-box hidden">
         <h3>진행</h3>
+        <div id="progressBar" class="progress-bar hidden"><div id="progressFill"></div></div>
         <div id="progressList"></div>
       </div>
 

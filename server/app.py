@@ -5,7 +5,7 @@ from typing import Any
 from flask import Flask, jsonify, render_template, request
 from flask_sock import Sock
 
-from .config import DEFAULT_SYSTEM_PROMPT, PROJECT_ROOT, SERVER_PORT
+from .config import DEFAULT_SYSTEM_PROMPT, PROJECT_ROOT, SERVER_DEBUG, SERVER_PORT
 from .email_data import load_emails
 from .errors import AiFilterError
 from .ollama_client import call_ollama, call_ollama_streaming
@@ -48,7 +48,8 @@ def build_run_response(engine: str, delete_ids: list[int], result: dict[str, Any
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    # Served from config so the textarea default cannot drift from the server default.
+    return render_template("index.html", default_system_prompt=DEFAULT_SYSTEM_PROMPT)
 
 
 @app.route("/api/emails")
@@ -87,8 +88,8 @@ def ws_run(ws):
         username, system_prompt, prompt = normalize_run_payload(json.loads(raw) if raw else None)
         send_event("progress", stage="queued", message="Request received")
 
-        def progress(stage: str, message: str) -> None:
-            send_event("progress", stage=stage, message=message)
+        def progress(stage: str, message: str, **extra: Any) -> None:
+            send_event("progress", stage=stage, message=message, **extra)
 
         delete_ids, engine = call_ollama_streaming(system_prompt, prompt, EMAILS, progress)
         send_event("progress", stage="scoring", message=f"Scoring {len(delete_ids)} deleted emails")
@@ -116,4 +117,4 @@ init_db()
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=SERVER_PORT, debug=True)
+    app.run(host="0.0.0.0", port=SERVER_PORT, debug=SERVER_DEBUG)
