@@ -81,6 +81,12 @@ def build_payload(system_prompt: str, user_prompt: str, emails: list[dict[str, A
     }
 
 
+def ensure_text(value: str | bytes) -> str:
+    if isinstance(value, bytes):
+        return value.decode("utf-8", errors="replace")
+    return value
+
+
 def strip_markdown_fence(content: str) -> str:
     content = content.strip()
     if not content.startswith("```"):
@@ -234,6 +240,7 @@ def call_ollama_streaming(system_prompt: str, user_prompt: str, emails: list[dic
                 for line in resp.iter_lines(decode_unicode=True):
                     if not line:
                         continue
+                    line = ensure_text(line)
                     raw_events.append(line)
                     event = json.loads(line)
                     if not isinstance(event, dict):
