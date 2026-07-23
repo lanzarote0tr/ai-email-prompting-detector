@@ -118,6 +118,8 @@ python -m server.app
 
 첫 실행은 모델 다운로드와 로딩 때문에 오래 걸릴 수 있습니다. 기본 read timeout은 `600`초입니다. Ollama 입력 프롬프트가 잘리지 않도록 이메일은 기본 10개씩 나누어 분석합니다.
 
+Docker 실행 시 Gunicorn access log는 stdout으로 출력됩니다. Ollama 내부 로그는 `/tmp/ollama-runtime.log`에 저장되어 기본 컨테이너 로그를 길게 만들지 않습니다.
+
 ## 점수 방식
 
 ```text

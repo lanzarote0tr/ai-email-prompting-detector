@@ -33,6 +33,8 @@ gunicorn \
   --bind "0.0.0.0:${PORT}" \
   --workers "${WEB_CONCURRENCY}" \
   --threads "${WEB_THREADS}" \
+  --access-logfile - \
+  --access-logformat '%(h)s %(r)s %(s)s %(b)s %(D)sµs' \
   --timeout 0 \
   server.app:app &
 WEB_PID="$!"
