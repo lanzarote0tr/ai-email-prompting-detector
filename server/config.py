@@ -34,15 +34,3 @@ Return ONLY strict JSON: {"delete_ids": [1, 2, 3]}.
 If no emails should be deleted, return {"delete_ids": []}.
 Do not include thinking, reasoning, explanations, markdown, comments, or extra keys.
 """.strip()
-
-OLLAMA_OUTPUT_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "delete_ids": {
-            "type": "array",
-            "items": {"type": "integer"},
-        },
-    },
-    "required": ["delete_ids"],
-    "additionalProperties": False,
-}

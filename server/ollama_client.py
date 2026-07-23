@@ -11,7 +11,6 @@ from .config import (
     OLLAMA_MODEL,
     OLLAMA_NUM_CTX,
     OLLAMA_NUM_PREDICT,
-    OLLAMA_OUTPUT_SCHEMA,
     OLLAMA_READ_TIMEOUT_SECONDS,
     OLLAMA_TIMEOUT,
 )
@@ -62,7 +61,6 @@ def build_payload(system_prompt: str, user_prompt: str, emails: list[dict[str, A
     return {
         "model": OLLAMA_MODEL,
         "stream": stream,
-        "format": OLLAMA_OUTPUT_SCHEMA,
         "system": system_prompt,
         "options": {
             "temperature": 0,
@@ -83,31 +81,68 @@ def build_payload(system_prompt: str, user_prompt: str, emails: list[dict[str, A
     }
 
 
-def clean_json_text(content: str) -> str:
+def strip_markdown_fence(content: str) -> str:
     content = content.strip()
-    if content.startswith("```"):
-        lines = content.splitlines()
-        if lines and lines[0].startswith("```"):
-            lines = lines[1:]
-        if lines and lines[-1].strip() == "```":
-            lines = lines[:-1]
-        content = "\n".join(lines).strip()
+    if not content.startswith("```"):
+        return content
+    lines = content.splitlines()
+    if lines and lines[0].startswith("```"):
+        lines = lines[1:]
+    if lines and lines[-1].strip() == "```":
+        lines = lines[:-1]
+    return "\n".join(lines).strip()
 
+
+def remove_thinking(content: str) -> str:
     lower = content.lower()
     while "<think>" in lower:
         start = lower.find("<think>")
         end = lower.find("</think>", start)
         if end == -1:
-            content = content[:start].strip()
-            break
+            return content[:start].strip()
         content = content[:start] + content[end + len("</think>"):]
         lower = content.lower()
+    return content.strip()
 
-    start = content.find("{")
-    end = content.rfind("}")
-    if start != -1 and end != -1 and end > start:
-        return content[start:end + 1]
-    return content
+
+def first_json_object(content: str) -> str | None:
+    for start, char in enumerate(content):
+        if char != "{":
+            continue
+
+        depth = 0
+        in_string = False
+        escape = False
+        for idx in range(start, len(content)):
+            current = content[idx]
+            if in_string:
+                if escape:
+                    escape = False
+                elif current == "\\":
+                    escape = True
+                elif current == '"':
+                    in_string = False
+                continue
+
+            if current == '"':
+                in_string = True
+            elif current == "{":
+                depth += 1
+            elif current == "}":
+                depth -= 1
+                if depth == 0:
+                    candidate = content[start:idx + 1]
+                    try:
+                        json.loads(candidate)
+                    except json.JSONDecodeError:
+                        break
+                    return candidate
+    return None
+
+
+def clean_json_text(content: str) -> str:
+    cleaned = remove_thinking(strip_markdown_fence(content))
+    return first_json_object(cleaned) or cleaned
 
 
 def parse_delete_ids(content: str | None, emails: list[dict[str, Any]]) -> list[int]:
@@ -185,6 +220,7 @@ def call_ollama_streaming(system_prompt: str, user_prompt: str, emails: list[dic
     for batch_number, batch in enumerate(batches, start=1):
         batch_label = f"{batch_number}/{len(batches)}"
         chunks = []
+        raw_events = []
         try:
             with requests.post(
                 endpoint,
@@ -198,6 +234,7 @@ def call_ollama_streaming(system_prompt: str, user_prompt: str, emails: list[dic
                 for line in resp.iter_lines(decode_unicode=True):
                     if not line:
                         continue
+                    raw_events.append(line)
                     event = json.loads(line)
                     if not isinstance(event, dict):
                         raise AiFilterError("Ollama stream returned a non-object event.")
@@ -223,6 +260,7 @@ def call_ollama_streaming(system_prompt: str, user_prompt: str, emails: list[dic
             raise AiFilterError(f"Ollama stream returned invalid JSON: {e}") from e
 
         progress("parsing", f"Parsing batch {batch_label}")
-        delete_ids.extend(parse_delete_ids("".join(chunks), batch))
+        content = "".join(chunks) or "\n".join(raw_events)
+        delete_ids.extend(parse_delete_ids(content, batch))
 
     return sorted(set(delete_ids)), "local-ollama"
