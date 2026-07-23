@@ -91,6 +91,8 @@ export OLLAMA_READ_TIMEOUT_SECONDS="600"
 export OLLAMA_NUM_CTX="8192"
 export OLLAMA_NUM_PREDICT="256"
 export OLLAMA_BATCH_SIZE="10"
+export AI_DEBUG_LOGS="1"
+export AI_DEBUG_OUTPUT_CHARS="2000"
 python -m server.app
 ```
 
@@ -109,6 +111,8 @@ $env:OLLAMA_READ_TIMEOUT_SECONDS="600"
 $env:OLLAMA_NUM_CTX="8192"
 $env:OLLAMA_NUM_PREDICT="256"
 $env:OLLAMA_BATCH_SIZE="10"
+$env:AI_DEBUG_LOGS="1"
+$env:AI_DEBUG_OUTPUT_CHARS="2000"
 python -m server.app
 ```
 

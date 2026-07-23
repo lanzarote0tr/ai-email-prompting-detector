@@ -10,6 +10,13 @@ def env_int(name: str, default: int, minimum: int) -> int:
     return max(minimum, value)
 
 
+def env_bool(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DB_PATH = PROJECT_ROOT / "data" / "scores.db"
 EMAILS_PATH = PROJECT_ROOT / "emails.json"
@@ -23,6 +30,8 @@ OLLAMA_NUM_PREDICT = env_int("OLLAMA_NUM_PREDICT", 256, 1)
 OLLAMA_NUM_CTX = env_int("OLLAMA_NUM_CTX", 8192, 2048)
 OLLAMA_BATCH_SIZE = env_int("OLLAMA_BATCH_SIZE", 10, 1)
 OLLAMA_TIMEOUT = (OLLAMA_CONNECT_TIMEOUT_SECONDS, OLLAMA_READ_TIMEOUT_SECONDS)
+AI_DEBUG_LOGS = env_bool("AI_DEBUG_LOGS", True)
+AI_DEBUG_OUTPUT_CHARS = env_int("AI_DEBUG_OUTPUT_CHARS", 2000, 1)
 
 SERVER_PORT = env_int("PORT", 5001, 1)
 

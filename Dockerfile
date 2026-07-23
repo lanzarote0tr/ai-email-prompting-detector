@@ -10,6 +10,8 @@ ENV PYTHONUNBUFFERED=1 \
     OLLAMA_NUM_PREDICT=256 \
     OLLAMA_NUM_CTX=8192 \
     OLLAMA_BATCH_SIZE=10 \
+    AI_DEBUG_LOGS=1 \
+    AI_DEBUG_OUTPUT_CHARS=2000 \
     WEB_CONCURRENCY=1 \
     WEB_THREADS=8
 
@@ -23,10 +25,12 @@ COPY requirements.txt .
 RUN python3 -m venv /opt/venv \
     && pip install --no-cache-dir -r requirements.txt
 
-RUN ollama serve & \
+RUN ollama serve >/tmp/ollama-build.log 2>&1 & \
     OLLAMA_PID="$!" \
-    && until curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; do sleep 1; done \
-    && ollama pull "$OLLAMA_MODEL" \
+    && until curl -fs http://127.0.0.1:11434/api/tags >/dev/null; do sleep 1; done \
+    && curl -fs http://127.0.0.1:11434/api/pull \
+        -H "Content-Type: application/json" \
+        -d "{\"name\":\"${OLLAMA_MODEL}\",\"stream\":false}" >/dev/null \
     && kill "$OLLAMA_PID"
 
 COPY . .

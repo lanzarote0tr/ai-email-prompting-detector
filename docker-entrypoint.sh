@@ -7,7 +7,7 @@ set -eu
 : "${WEB_CONCURRENCY:=1}"
 : "${WEB_THREADS:=8}"
 
-ollama serve &
+ollama serve >/tmp/ollama-runtime.log 2>&1 &
 OLLAMA_PID="$!"
 WEB_PID=""
 
@@ -19,12 +19,14 @@ cleanup() {
 }
 trap cleanup INT TERM EXIT
 
-until curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; do
+until curl -fs http://127.0.0.1:11434/api/tags >/dev/null; do
   sleep 1
 done
 
 if ! ollama list | awk 'NR > 1 {print $1}' | grep -qx "$OLLAMA_MODEL"; then
-  ollama pull "$OLLAMA_MODEL"
+  curl -fs http://127.0.0.1:11434/api/pull \
+    -H "Content-Type: application/json" \
+    -d "{\"name\":\"${OLLAMA_MODEL}\",\"stream\":false}" >/dev/null
 fi
 
 gunicorn \

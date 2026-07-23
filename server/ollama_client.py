@@ -1,9 +1,13 @@
 import json
+import logging
+import re
 from typing import Any
 
 import requests
 
 from .config import (
+    AI_DEBUG_LOGS,
+    AI_DEBUG_OUTPUT_CHARS,
     OLLAMA_API,
     OLLAMA_API_KEY,
     OLLAMA_BATCH_SIZE,
@@ -15,6 +19,8 @@ from .config import (
     OLLAMA_TIMEOUT,
 )
 from .errors import AiFilterError
+
+logger = logging.getLogger(__name__)
 
 
 def compact_text(value: Any) -> str:
@@ -79,6 +85,26 @@ def build_payload(system_prompt: str, user_prompt: str, emails: list[dict[str, A
             + "\n\nReturn one strict JSON object only. Use only allowed delete_ids."
         ),
     }
+
+
+def debug_log(message: str, *args: Any) -> None:
+    if AI_DEBUG_LOGS:
+        logger.info(message, *args)
+
+
+def preview_text(value: Any) -> str:
+    text = "" if value is None else ensure_text(value) if isinstance(value, bytes) else str(value)
+    text = text.replace("\r", "\\r").replace("\n", "\\n")
+    if len(text) > AI_DEBUG_OUTPUT_CHARS:
+        return text[:AI_DEBUG_OUTPUT_CHARS] + "...[truncated]"
+    return text
+
+
+def email_id_range(emails: list[dict[str, Any]]) -> str:
+    ids = [email["id"] for email in emails]
+    if not ids:
+        return "empty"
+    return f"{ids[0]}-{ids[-1]} ({len(ids)} emails)"
 
 
 def ensure_text(value: str | bytes) -> str:
@@ -146,16 +172,77 @@ def first_json_object(content: str) -> str | None:
     return None
 
 
+def first_json_value(content: str) -> str | None:
+    starts = [idx for idx, char in enumerate(content) if char in "[{"]
+    for start in starts:
+        opener = content[start]
+        closer = "}" if opener == "{" else "]"
+        depth = 0
+        in_string = False
+        escape = False
+        for idx in range(start, len(content)):
+            current = content[idx]
+            if in_string:
+                if escape:
+                    escape = False
+                elif current == "\\":
+                    escape = True
+                elif current == '"':
+                    in_string = False
+                continue
+
+            if current == '"':
+                in_string = True
+            elif current == opener:
+                depth += 1
+            elif current == closer:
+                depth -= 1
+                if depth == 0:
+                    candidate = content[start:idx + 1]
+                    try:
+                        json.loads(candidate)
+                    except json.JSONDecodeError:
+                        break
+                    return candidate
+    return None
+
+
 def clean_json_text(content: str) -> str:
     cleaned = remove_thinking(strip_markdown_fence(content))
-    return first_json_object(cleaned) or cleaned
+    return first_json_value(cleaned) or first_json_object(cleaned) or cleaned
+
+
+def extract_delete_id_values(parsed: Any) -> Any:
+    if isinstance(parsed, list):
+        return parsed
+    if not isinstance(parsed, dict):
+        return None
+
+    for key in ("delete_ids", "deleted_ids", "ids", "delete", "malicious_ids"):
+        value = parsed.get(key)
+        if value is not None:
+            return value
+    return None
+
+
+def normalize_delete_id_values(value: Any) -> list[Any] | None:
+    if isinstance(value, list):
+        return value
+    if isinstance(value, int):
+        return [value]
+    if isinstance(value, str):
+        numbers = re.findall(r"\d+", value)
+        return numbers if numbers else None
+    return None
 
 
 def parse_delete_ids(content: str | None, emails: list[dict[str, Any]]) -> list[int]:
     if not isinstance(content, str):
         raise AiFilterError("AI API response did not contain a text response.")
+    cleaned = clean_json_text(content)
+    debug_log("AI JSON candidate: %s", preview_text(cleaned))
     try:
-        parsed = json.loads(clean_json_text(content))
+        parsed = json.loads(cleaned)
     except json.JSONDecodeError as e:
         snippet = content.strip().replace("\n", " ")[:300]
         raise AiFilterError(
@@ -163,12 +250,17 @@ def parse_delete_ids(content: str | None, emails: list[dict[str, Any]]) -> list[
             f"Raw output starts with: {snippet!r}"
         ) from e
 
-    if not isinstance(parsed, dict) or not isinstance(parsed.get("delete_ids"), list):
-        raise AiFilterError('AI output must be a JSON object with a "delete_ids" list.')
+    raw_delete_ids = normalize_delete_id_values(extract_delete_id_values(parsed))
+    if raw_delete_ids is None:
+        snippet = json.dumps(parsed, ensure_ascii=False)[:300]
+        raise AiFilterError(
+            'AI output must contain delete IDs, for example {"delete_ids": [1, 2, 3]}. '
+            f"Parsed JSON was: {snippet!r}"
+        )
 
     allowed_ids = {email["id"] for email in emails}
     delete_ids = []
-    for raw_id in parsed["delete_ids"]:
+    for raw_id in raw_delete_ids:
         try:
             email_id = int(raw_id)
         except (TypeError, ValueError) as e:
@@ -176,19 +268,40 @@ def parse_delete_ids(content: str | None, emails: list[dict[str, Any]]) -> list[
         if email_id not in allowed_ids:
             raise AiFilterError(f"AI returned unknown email id: {email_id}")
         delete_ids.append(email_id)
-    return sorted(set(delete_ids))
+    parsed_ids = sorted(set(delete_ids))
+    debug_log("AI parsed delete_ids=%s", parsed_ids)
+    return parsed_ids
 
 
 def call_ollama(system_prompt: str, user_prompt: str, emails: list[dict[str, Any]]) -> tuple[list[int], str]:
     endpoint = ollama_endpoint()
     delete_ids = []
 
-    for batch in email_batches(emails):
+    batches = email_batches(emails)
+    debug_log(
+        "AI run start model=%s endpoint=%s batches=%d batch_size=%d num_ctx=%d num_predict=%d",
+        OLLAMA_MODEL,
+        endpoint,
+        len(batches),
+        OLLAMA_BATCH_SIZE,
+        OLLAMA_NUM_CTX,
+        OLLAMA_NUM_PREDICT,
+    )
+
+    for batch_number, batch in enumerate(batches, start=1):
+        payload = build_payload(system_prompt, user_prompt, batch, stream=False)
+        debug_log(
+            "AI batch %d/%d ids=%s prompt_chars=%d stream=false",
+            batch_number,
+            len(batches),
+            email_id_range(batch),
+            len(payload["prompt"]),
+        )
         try:
             resp = requests.post(
                 endpoint,
                 headers=ollama_headers(),
-                json=build_payload(system_prompt, user_prompt, batch, stream=False),
+                json=payload,
                 timeout=OLLAMA_TIMEOUT,
             )
             resp.raise_for_status()
@@ -211,7 +324,9 @@ def call_ollama(system_prompt: str, user_prompt: str, emails: list[dict[str, Any
 
         if not isinstance(data, dict):
             raise AiFilterError("AI API returned invalid JSON response: top-level response must be an object.")
-        delete_ids.extend(parse_delete_ids(data.get("response"), batch))
+        response_text = data.get("response")
+        debug_log("AI batch %d/%d raw output: %s", batch_number, len(batches), preview_text(response_text))
+        delete_ids.extend(parse_delete_ids(response_text, batch))
 
     return sorted(set(delete_ids)), "local-ollama"
 
@@ -222,16 +337,32 @@ def call_ollama_streaming(system_prompt: str, user_prompt: str, emails: list[dic
     delete_ids = []
     progress("connecting", f"Connecting to local Ollama at {endpoint}")
     progress("waiting", f"Waiting for {OLLAMA_MODEL}; read timeout is {OLLAMA_READ_TIMEOUT_SECONDS}s.")
+    debug_log(
+        "AI stream start model=%s endpoint=%s batches=%d batch_size=%d num_ctx=%d num_predict=%d",
+        OLLAMA_MODEL,
+        endpoint,
+        len(batches),
+        OLLAMA_BATCH_SIZE,
+        OLLAMA_NUM_CTX,
+        OLLAMA_NUM_PREDICT,
+    )
 
     for batch_number, batch in enumerate(batches, start=1):
         batch_label = f"{batch_number}/{len(batches)}"
         chunks = []
         raw_events = []
+        payload = build_payload(system_prompt, user_prompt, batch, stream=True)
+        debug_log(
+            "AI stream batch %s ids=%s prompt_chars=%d stream=true",
+            batch_label,
+            email_id_range(batch),
+            len(payload["prompt"]),
+        )
         try:
             with requests.post(
                 endpoint,
                 headers=ollama_headers(),
-                json=build_payload(system_prompt, user_prompt, batch, stream=True),
+                json=payload,
                 timeout=OLLAMA_TIMEOUT,
                 stream=True,
             ) as resp:
@@ -268,6 +399,7 @@ def call_ollama_streaming(system_prompt: str, user_prompt: str, emails: list[dic
 
         progress("parsing", f"Parsing batch {batch_label}")
         content = "".join(chunks) or "\n".join(raw_events)
+        debug_log("AI stream batch %s raw output: %s", batch_label, preview_text(content))
         delete_ids.extend(parse_delete_ids(content, batch))
 
     return sorted(set(delete_ids)), "local-ollama"

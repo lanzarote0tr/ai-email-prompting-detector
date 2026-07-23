@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Any
 
 from flask import Flask, jsonify, render_template, request
@@ -10,6 +11,8 @@ from .errors import AiFilterError
 from .ollama_client import call_ollama, call_ollama_streaming
 from .scoring import build_reveal, score_result
 from .storage import init_db, leaderboard_rows, save_score
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
 app = Flask(
     __name__,
